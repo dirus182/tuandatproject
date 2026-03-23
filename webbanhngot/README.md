@@ -6,7 +6,7 @@ Simple cake shop website project.
 HTML
 CSS
 JavaScript
-MySQL
+PostgreSQL
 
 ## Database
 Database backup is stored in:
