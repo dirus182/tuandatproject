@@ -5,20 +5,21 @@ import java.util.ArrayList;
 import webbanhngot.entity.Product;
 
 public class ProductService {
+
 	private ArrayList<Product> productlist = new ArrayList<Product>();
 
-	// C
+	// C - Create
 	public void addProduct(Product product) {
 		productlist.add(product);
 	}
 
-	// R All
+	// R - Read all
 	public ArrayList<Product> getAllProducts() {
 		return productlist;
 	}
 
-	// R BY ID
-	public Product getProductByCakeIDd(Long cake_id) {
+	// R - Read by cake_id
+	public Product getProductByCakeID(Long cake_id) {
 		for (Product product : productlist) {
 			if (product.getCake_id().equals(cake_id)) {
 				return product;
@@ -27,7 +28,7 @@ public class ProductService {
 		return null;
 	}
 
-	// U
+	// U - Update
 	public boolean updateProduct(Long cake_id, Product newProduct) {
 		for (Product product : productlist) {
 			if (product.getCake_id().equals(cake_id)) {
@@ -42,5 +43,15 @@ public class ProductService {
 		}
 		return false;
 	}
-	// D
+
+	// D - Delete
+	public boolean deleteProduct(Long cake_id) {
+		for (int i = 0; i < productlist.size(); i++) {
+			if (productlist.get(i).getCake_id().equals(cake_id)) {
+				productlist.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
 }

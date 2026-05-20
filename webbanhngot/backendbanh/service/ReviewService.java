@@ -5,20 +5,21 @@ import java.util.ArrayList;
 import webbanhngot.entity.Review;
 
 public class ReviewService {
+
 	private ArrayList<Review> reviewlist = new ArrayList<Review>();
 
-	// C
+	// C - Create
 	public void addReview(Review review) {
 		reviewlist.add(review);
 	}
 
-	// R ALL
+	// R - Read all
 	public ArrayList<Review> getAllReviews() {
 		return reviewlist;
 	}
 
-// R BY ID
-	public Review getReviewBYID(Integer reviews_id) {
+	// R - Read by reviews_id
+	public Review getReviewByID(Integer reviews_id) {
 		for (Review review : reviewlist) {
 			if (review.getReviews_id().equals(reviews_id)) {
 				return review;
@@ -27,7 +28,7 @@ public class ReviewService {
 		return null;
 	}
 
-	// U
+	// U - Update
 	public boolean updateReview(Integer reviews_id, Review newReview) {
 		for (Review review : reviewlist) {
 			if (review.getReviews_id().equals(reviews_id)) {
@@ -41,11 +42,13 @@ public class ReviewService {
 		return false;
 	}
 
-	// D
+	// D - Delete
 	public boolean deleteReview(Integer reviews_id) {
 		for (int i = 0; i < reviewlist.size(); i++) {
-			reviewlist.remove(i);
-			return true;
+			if (reviewlist.get(i).getReviews_id().equals(reviews_id)) {
+				reviewlist.remove(i);
+				return true;
+			}
 		}
 		return false;
 	}
