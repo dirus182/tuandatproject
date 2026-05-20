@@ -15,5 +15,5 @@ doannn.text
 
 ## Description
 This project simulates a cake shop website where users can view products and manage orders.
-video for demo: https://drive.google.com/drive/folders/1Pxe5uebmgvIERGbf95GHDAl8iJrw0F6U?usp=sharing
+video for demo: [https://drive.google.com/drive/folders/1Pxe5uebmgvIERGbf95GHDAl8iJrw0F6U?usp=sharing](https://drive.google.com/drive/u/0/folders/1SgmNLUK7wtAjOaUrKEgwIgWC_63_6UTE)
 including
