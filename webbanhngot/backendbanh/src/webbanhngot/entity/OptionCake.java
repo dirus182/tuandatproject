@@ -30,7 +30,7 @@ public class OptionCake {
 	}
 
 	@Override
-	public String toString() {
-		return "OptionCake [option_cake_id=" + option_cake_id + ", category_name" + category_name + "]";
-	}
+public String toString() {
+    return "OptionCake [option_cake_id=" + option_cake_id + ", category_name=" + category_name + "]";
+}
 }
