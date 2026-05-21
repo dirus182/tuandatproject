@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Product {
-	private Long cake_id;
-	private Long option_cake_id;
+	private Integer cake_id;
+	private Integer option_cake_id;
 	private Integer quantity;
 	private BigDecimal price;
 	private String[] description;
@@ -15,7 +15,7 @@ public class Product {
 	public Product() {
 	}
 
-	public Product(Long cake_id, Long option_cake_id, Integer quantity, BigDecimal price, String[] description,
+	public Product(Integer cake_id, Integer option_cake_id, Integer quantity, BigDecimal price, String[] description,
 			String cake_name, LocalDateTime create_at) {
 		this.cake_id = cake_id;
 		this.option_cake_id = option_cake_id;
@@ -32,19 +32,19 @@ public class Product {
 				+ ", price=" + price + ", cake_name=" + cake_name + ", create_at=" + create_at + "]";
 	}
 
-	public Long getCake_id() {
+	public Integer getCake_id() {
 		return cake_id;
 	}
 
-	public void setCake_id(Long cake_id) {
+	public void setCake_id(Integer cake_id) {
 		this.cake_id = cake_id;
 	}
 
-	public Long getOption_cake_id() {
+	public Integer getOption_cake_id() {
 		return option_cake_id;
 	}
 
-	public void setOption_cake_id(Long option_cake_id) {
+	public void setOption_cake_id(Integer option_cake_id) {
 		this.option_cake_id = option_cake_id;
 	}
 

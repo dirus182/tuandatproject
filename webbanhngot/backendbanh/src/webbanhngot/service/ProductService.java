@@ -19,7 +19,7 @@ public class ProductService {
 	}
 
 	// R - Read by cake_id
-	public Product getProductByCakeID(Long cake_id) {
+	public Product getProductByCakeID(Integer cake_id) {
 		for (Product product : productlist) {
 			if (product.getCake_id().equals(cake_id)) {
 				return product;
@@ -29,7 +29,7 @@ public class ProductService {
 	}
 
 	// U - Update
-	public boolean updateProduct(Long cake_id, Product newProduct) {
+	public boolean updateProduct(Integer cake_id, Product newProduct) {
 		for (Product product : productlist) {
 			if (product.getCake_id().equals(cake_id)) {
 				product.setOption_cake_id(newProduct.getOption_cake_id());
@@ -45,7 +45,7 @@ public class ProductService {
 	}
 
 	// D - Delete
-	public boolean deleteProduct(Long cake_id) {
+	public boolean deleteProduct(Integer cake_id) {
 		for (int i = 0; i < productlist.size(); i++) {
 			if (productlist.get(i).getCake_id().equals(cake_id)) {
 				productlist.remove(i);

@@ -1,49 +1,57 @@
 package webbanhngot.app;
 
-import webbanhngot.entity.OptionCake;
-import webbanhngot.service.OptionCakeService;
+import java.time.LocalDateTime;
+
+import webbanhngot.entity.Payment;
+import webbanhngot.service.PaymentService;
 
 public class MainTest {
     public static void main(String[] args) {
-        OptionCakeService optionCakeService = new OptionCakeService();
+        PaymentService paymentService = new PaymentService();
 
         // C - CREATE
-        OptionCake optionCake1 = new OptionCake();
-        optionCake1.setOption_cake_id(1L);
-        optionCake1.setCategory_name("Banh sinh nhat");
+        Payment payment1 = new Payment();
+        payment1.setPayment_id(10);
+        payment1.setOrder_id(25);
+        payment1.setPayment_method("cash");
+        payment1.setPayment_status("pending");
+        payment1.setPayment_date(LocalDateTime.now());
 
-        optionCakeService.addOptionCake(optionCake1);
+        paymentService.addPayment(payment1);
 
-        System.out.println("=== SAU KHI THEM OPTION CAKE ===");
-        System.out.println("So luong option cake: " + optionCakeService.getAllOptionCakes().size());
-        System.out.println(optionCakeService.getAllOptionCakes());
+        System.out.println("=== SAU KHI THEM PAYMENT ===");
+        System.out.println("So luong payment: " + paymentService.getAllPayments().size());
+        System.out.println(paymentService.getAllPayments());
 
         // R - READ BY ID
-        OptionCake foundOptionCake = optionCakeService.getOptionCakeByID(1L);
+        Payment foundPayment = paymentService.getPaymentByID(10);
 
-        System.out.println("\n=== TIM OPTION CAKE THEO option_cake_id = 1 ===");
-        if (foundOptionCake != null) {
-            System.out.println("Tim thay: " + foundOptionCake);
+        System.out.println("\n=== TIM PAYMENT THEO payment_id = 10 ===");
+        if (foundPayment != null) {
+            System.out.println("Tim thay: " + foundPayment);
         } else {
-            System.out.println("Khong tim thay option cake");
+            System.out.println("Khong tim thay payment");
         }
 
         // U - UPDATE
-        OptionCake updatedOptionCake = new OptionCake();
-        updatedOptionCake.setOption_cake_id(1L);
-        updatedOptionCake.setCategory_name("Banh kem cao cap");
+        Payment updatedPayment = new Payment();
+        updatedPayment.setPayment_id(10);
+        updatedPayment.setOrder_id(25);
+        updatedPayment.setPayment_method("credit_card");
+        updatedPayment.setPayment_status("completed");
+        updatedPayment.setPayment_date(LocalDateTime.now());
 
-        boolean updateResult = optionCakeService.updateOptionCake(1L, updatedOptionCake);
+        boolean updateResult = paymentService.updatePayment(10, updatedPayment);
 
-        System.out.println("\n=== UPDATE OPTION CAKE option_cake_id = 1 ===");
+        System.out.println("\n=== UPDATE PAYMENT payment_id = 10 ===");
         System.out.println("Update thanh cong khong? " + updateResult);
-        System.out.println("Sau update: " + optionCakeService.getOptionCakeByID(1L));
+        System.out.println("Sau update: " + paymentService.getPaymentByID(10));
 
         // D - DELETE
-        boolean deleteResult = optionCakeService.deleteOptionCake(1L);
+        boolean deleteResult = paymentService.deletePayment(10);
 
-        System.out.println("\n=== DELETE OPTION CAKE option_cake_id = 1 ===");
+        System.out.println("\n=== DELETE PAYMENT payment_id = 10 ===");
         System.out.println("Delete thanh cong khong? " + deleteResult);
-        System.out.println("So luong option cake sau delete: " + optionCakeService.getAllOptionCakes().size());
+        System.out.println("So luong payment sau delete: " + paymentService.getAllPayments().size());
     }
 }
