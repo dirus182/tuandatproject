@@ -1,5 +1,7 @@
 package webbanhngot.app;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Product;
@@ -9,29 +11,91 @@ public class MainTest {
     public static void main(String[] args) {
         ProductRepository productRepository = new ProductRepository();
 
-        ArrayList<Product> productList = productRepository.getAllProducts();
+        Integer testCakeId = 9999;
 
-        System.out.println("=== DANH SACH PRODUCT TU DATABASE ===");
-        System.out.println("So luong product: " + productList.size());
+        // Xoa truoc neu lan truoc test bi dung giua chung
+        productRepository.deleteProduct(testCakeId);
 
-        for (Product product : productList) {
-            System.out.println(product);
+        // =========================
+        // C - CREATE
+        // =========================
+        Product newProduct = new Product(
+                testCakeId,
+                1,
+                50,
+                new BigDecimal("9.99"),
+                new String[] { "Test product from JDBC" },
+                "Test Cake",
+                LocalDateTime.now()
+        );
+
+        boolean addResult = productRepository.addProduct(newProduct);
+
+        System.out.println("=== INSERT PRODUCT ===");
+        System.out.println("Them product thanh cong khong? " + addResult);
+
+        // =========================
+        // R - READ BY ID
+        // =========================
+        Product foundAfterInsert = productRepository.getProductByCakeID(testCakeId);
+
+        System.out.println("\n=== READ PRODUCT SAU INSERT ===");
+        if (foundAfterInsert != null) {
+            System.out.println("Tim thay: " + foundAfterInsert);
+        } else {
+            System.out.println("Khong tim thay product sau insert");
         }
 
-        if (!productList.isEmpty()) {
-            Integer firstCakeId = productList.get(0).getCake_id();
+        // =========================
+        // U - UPDATE
+        // =========================
+        Product updatedProduct = new Product(
+                testCakeId,
+                2,
+                60,
+                new BigDecimal("12.99"),
+                new String[] { "Updated product from JDBC" },
+                "Updated Cake",
+                LocalDateTime.now()
+        );
 
-            System.out.println("\n=== TIM PRODUCT THEO cake_id = " + firstCakeId + " ===");
+        boolean updateResult = productRepository.updateProduct(testCakeId, updatedProduct);
 
-            Product foundProduct = productRepository.getProductByCakeID(firstCakeId);
+        System.out.println("\n=== UPDATE PRODUCT ===");
+        System.out.println("Update product thanh cong khong? " + updateResult);
 
-            if (foundProduct != null) {
-                System.out.println("Tim thay: " + foundProduct);
-            } else {
-                System.out.println("Khong tim thay product");
-            }
+        Product foundAfterUpdate = productRepository.getProductByCakeID(testCakeId);
+
+        System.out.println("\n=== READ PRODUCT SAU UPDATE ===");
+        if (foundAfterUpdate != null) {
+            System.out.println("Sau update: " + foundAfterUpdate);
         } else {
-            System.out.println("\nBang product dang rong, chua co du lieu de tim theo ID.");
+            System.out.println("Khong tim thay product sau update");
+        }
+
+        // =========================
+        // R - READ ALL
+        // =========================
+        ArrayList<Product> productList = productRepository.getAllProducts();
+
+        System.out.println("\n=== DANH SACH PRODUCT TU DATABASE ===");
+        System.out.println("So luong product hien tai: " + productList.size());
+
+        // =========================
+        // D - DELETE
+        // =========================
+        boolean deleteResult = productRepository.deleteProduct(testCakeId);
+
+        System.out.println("\n=== DELETE PRODUCT ===");
+        System.out.println("Delete product thanh cong khong? " + deleteResult);
+
+        Product foundAfterDelete = productRepository.getProductByCakeID(testCakeId);
+
+        System.out.println("\n=== READ PRODUCT SAU DELETE ===");
+        if (foundAfterDelete == null) {
+            System.out.println("Da xoa thanh cong, khong con product cake_id = " + testCakeId);
+        } else {
+            System.out.println("Van con product: " + foundAfterDelete);
         }
     }
 }
