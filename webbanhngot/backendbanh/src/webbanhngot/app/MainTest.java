@@ -1,101 +1,91 @@
 package webbanhngot.app;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import webbanhngot.entity.Product;
-import webbanhngot.repository.ProductRepository;
+import webbanhngot.entity.OptionCake;
+import webbanhngot.repository.OptionCakeRepository;
 
 public class MainTest {
     public static void main(String[] args) {
-        ProductRepository productRepository = new ProductRepository();
+        OptionCakeRepository optionCakeRepository = new OptionCakeRepository();
 
-        Integer testCakeId = 9999;
+        Integer testOptionCakeId = 9999;
 
         // Xoa truoc neu lan truoc test bi dung giua chung
-        productRepository.deleteProduct(testCakeId);
+        optionCakeRepository.deleteOptionCake(testOptionCakeId);
 
         // =========================
         // C - CREATE
         // =========================
-        Product newProduct = new Product(
-                testCakeId,
-                1,
-                50,
-                new BigDecimal("9.99"),
-                new String[] { "Test product from JDBC" },
-                "Test Cake",
-                LocalDateTime.now()
-        );
+        OptionCake newOptionCake = new OptionCake();
+        newOptionCake.setOption_cake_id(testOptionCakeId);
+        newOptionCake.setCategory_name("Test Category");
 
-        boolean addResult = productRepository.addProduct(newProduct);
+        boolean addResult = optionCakeRepository.addOptionCake(newOptionCake);
 
-        System.out.println("=== INSERT PRODUCT ===");
-        System.out.println("Them product thanh cong khong? " + addResult);
+        System.out.println("=== INSERT OPTION CAKE ===");
+        System.out.println("Them option cake thanh cong khong? " + addResult);
 
         // =========================
         // R - READ BY ID
         // =========================
-        Product foundAfterInsert = productRepository.getProductByCakeID(testCakeId);
+        OptionCake foundAfterInsert = optionCakeRepository.getOptionCakeByID(testOptionCakeId);
 
-        System.out.println("\n=== READ PRODUCT SAU INSERT ===");
+        System.out.println("\n=== READ OPTION CAKE SAU INSERT ===");
         if (foundAfterInsert != null) {
             System.out.println("Tim thay: " + foundAfterInsert);
         } else {
-            System.out.println("Khong tim thay product sau insert");
+            System.out.println("Khong tim thay option cake sau insert");
         }
 
         // =========================
         // U - UPDATE
         // =========================
-        Product updatedProduct = new Product(
-                testCakeId,
-                2,
-                60,
-                new BigDecimal("12.99"),
-                new String[] { "Updated product from JDBC" },
-                "Updated Cake",
-                LocalDateTime.now()
-        );
+        OptionCake updatedOptionCake = new OptionCake();
+        updatedOptionCake.setOption_cake_id(testOptionCakeId);
+        updatedOptionCake.setCategory_name("Updated Category");
 
-        boolean updateResult = productRepository.updateProduct(testCakeId, updatedProduct);
+        boolean updateResult = optionCakeRepository.updateOptionCake(testOptionCakeId, updatedOptionCake);
 
-        System.out.println("\n=== UPDATE PRODUCT ===");
-        System.out.println("Update product thanh cong khong? " + updateResult);
+        System.out.println("\n=== UPDATE OPTION CAKE ===");
+        System.out.println("Update option cake thanh cong khong? " + updateResult);
 
-        Product foundAfterUpdate = productRepository.getProductByCakeID(testCakeId);
+        OptionCake foundAfterUpdate = optionCakeRepository.getOptionCakeByID(testOptionCakeId);
 
-        System.out.println("\n=== READ PRODUCT SAU UPDATE ===");
+        System.out.println("\n=== READ OPTION CAKE SAU UPDATE ===");
         if (foundAfterUpdate != null) {
             System.out.println("Sau update: " + foundAfterUpdate);
         } else {
-            System.out.println("Khong tim thay product sau update");
+            System.out.println("Khong tim thay option cake sau update");
         }
 
         // =========================
         // R - READ ALL
         // =========================
-        ArrayList<Product> productList = productRepository.getAllProducts();
+        ArrayList<OptionCake> optionCakeList = optionCakeRepository.getAllOptionCakes();
 
-        System.out.println("\n=== DANH SACH PRODUCT TU DATABASE ===");
-        System.out.println("So luong product hien tai: " + productList.size());
+        System.out.println("\n=== DANH SACH OPTION CAKE TU DATABASE ===");
+        System.out.println("So luong option cake hien tai: " + optionCakeList.size());
+
+        for (OptionCake optionCake : optionCakeList) {
+            System.out.println(optionCake);
+        }
 
         // =========================
         // D - DELETE
         // =========================
-        boolean deleteResult = productRepository.deleteProduct(testCakeId);
+        boolean deleteResult = optionCakeRepository.deleteOptionCake(testOptionCakeId);
 
-        System.out.println("\n=== DELETE PRODUCT ===");
-        System.out.println("Delete product thanh cong khong? " + deleteResult);
+        System.out.println("\n=== DELETE OPTION CAKE ===");
+        System.out.println("Delete option cake thanh cong khong? " + deleteResult);
 
-        Product foundAfterDelete = productRepository.getProductByCakeID(testCakeId);
+        OptionCake foundAfterDelete = optionCakeRepository.getOptionCakeByID(testOptionCakeId);
 
-        System.out.println("\n=== READ PRODUCT SAU DELETE ===");
+        System.out.println("\n=== READ OPTION CAKE SAU DELETE ===");
         if (foundAfterDelete == null) {
-            System.out.println("Da xoa thanh cong, khong con product cake_id = " + testCakeId);
+            System.out.println("Da xoa thanh cong, khong con option_cake_id = " + testOptionCakeId);
         } else {
-            System.out.println("Van con product: " + foundAfterDelete);
+            System.out.println("Van con option cake: " + foundAfterDelete);
         }
     }
 }

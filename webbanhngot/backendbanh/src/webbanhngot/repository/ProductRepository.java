@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import webbanhngot.db.DBConnection;
 import webbanhngot.entity.Product;
+
+
 public class ProductRepository {
       public ArrayList<Product> getAllProducts() {
         ArrayList<Product> productList = new ArrayList<Product>();
