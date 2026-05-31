@@ -1,99 +1,98 @@
 package webbanhngot.app;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import webbanhngot.entity.CustomerOrder;
-import webbanhngot.repository.CustomerOrderRepository;
+import webbanhngot.entity.OrderDetail;
+import webbanhngot.repository.OrderDetailRepository;
 
 public class MainTest {
     public static void main(String[] args) {
-        CustomerOrderRepository customerOrderRepository = new CustomerOrderRepository();
+        OrderDetailRepository orderDetailRepository = new OrderDetailRepository();
 
-        Integer testOrderId = 9999;
+        Integer testOrderDetailId = 9999;
 
         // Xoa truoc neu lan truoc test bi dung giua chung
-        customerOrderRepository.deleteCustomerOrder(testOrderId);
+        orderDetailRepository.deleteOrderDetail(testOrderDetailId);
 
         // =========================
         // C - CREATE
         // =========================
-        CustomerOrder newOrder = new CustomerOrder();
-        newOrder.setOrder_id(testOrderId);
-        newOrder.setCustomer_id(5);
-        newOrder.setStatus("pending");
-        newOrder.setOrder_date(LocalDateTime.now());
-        newOrder.setTotal_price(new BigDecimal("99.99"));
+        OrderDetail newOrderDetail = new OrderDetail();
+        newOrderDetail.setOrder_detail_id(testOrderDetailId);
+        newOrderDetail.setOrder_id(170);
+        newOrderDetail.setCake_id(1);
+        newOrderDetail.setQuantity(2);
+        newOrderDetail.setSub_total(new BigDecimal("11.98"));
 
-        boolean addResult = customerOrderRepository.addCustomerOrder(newOrder);
+        boolean addResult = orderDetailRepository.addOrderDetail(newOrderDetail);
 
-        System.out.println("=== INSERT CUSTOMER ORDER ===");
-        System.out.println("Them customer order thanh cong khong? " + addResult);
+        System.out.println("=== INSERT ORDER DETAIL ===");
+        System.out.println("Them order detail thanh cong khong? " + addResult);
 
         // =========================
         // R - READ BY ID
         // =========================
-        CustomerOrder foundAfterInsert = customerOrderRepository.getCustomerOrderByID(testOrderId);
+        OrderDetail foundAfterInsert = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
 
-        System.out.println("\n=== READ CUSTOMER ORDER SAU INSERT ===");
+        System.out.println("\n=== READ ORDER DETAIL SAU INSERT ===");
         if (foundAfterInsert != null) {
             System.out.println("Tim thay: " + foundAfterInsert);
         } else {
-            System.out.println("Khong tim thay customer order sau insert");
+            System.out.println("Khong tim thay order detail sau insert");
         }
 
         // =========================
         // U - UPDATE
         // =========================
-        CustomerOrder updatedOrder = new CustomerOrder();
-        updatedOrder.setOrder_id(testOrderId);
-        updatedOrder.setCustomer_id(5);
-        updatedOrder.setStatus("shipped");
-        updatedOrder.setOrder_date(LocalDateTime.now());
-        updatedOrder.setTotal_price(new BigDecimal("129.99"));
+        OrderDetail updatedOrderDetail = new OrderDetail();
+        updatedOrderDetail.setOrder_detail_id(testOrderDetailId);
+        updatedOrderDetail.setOrder_id(170);
+        updatedOrderDetail.setCake_id(2);
+        updatedOrderDetail.setQuantity(3);
+        updatedOrderDetail.setSub_total(new BigDecimal("19.47"));
 
-        boolean updateResult = customerOrderRepository.updateCustomerOrder(testOrderId, updatedOrder);
+        boolean updateResult = orderDetailRepository.updateOrderDetail(testOrderDetailId, updatedOrderDetail);
 
-        System.out.println("\n=== UPDATE CUSTOMER ORDER ===");
-        System.out.println("Update customer order thanh cong khong? " + updateResult);
+        System.out.println("\n=== UPDATE ORDER DETAIL ===");
+        System.out.println("Update order detail thanh cong khong? " + updateResult);
 
-        CustomerOrder foundAfterUpdate = customerOrderRepository.getCustomerOrderByID(testOrderId);
+        OrderDetail foundAfterUpdate = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
 
-        System.out.println("\n=== READ CUSTOMER ORDER SAU UPDATE ===");
+        System.out.println("\n=== READ ORDER DETAIL SAU UPDATE ===");
         if (foundAfterUpdate != null) {
             System.out.println("Sau update: " + foundAfterUpdate);
         } else {
-            System.out.println("Khong tim thay customer order sau update");
+            System.out.println("Khong tim thay order detail sau update");
         }
 
         // =========================
         // R - READ ALL
         // =========================
-        ArrayList<CustomerOrder> orderList = customerOrderRepository.getAllCustomerOrders();
+        ArrayList<OrderDetail> orderDetailList = orderDetailRepository.getAllOrderDetails();
 
-        System.out.println("\n=== DANH SACH CUSTOMER ORDER TU DATABASE ===");
-        System.out.println("So luong customer order hien tai: " + orderList.size());
+        System.out.println("\n=== DANH SACH ORDER DETAIL TU DATABASE ===");
+        System.out.println("So luong order detail hien tai: " + orderDetailList.size());
 
-        for (int i = 0; i < Math.min(5, orderList.size()); i++) {
-            System.out.println(orderList.get(i));
+        for (int i = 0; i < Math.min(5, orderDetailList.size()); i++) {
+            System.out.println(orderDetailList.get(i));
         }
 
         // =========================
         // D - DELETE
         // =========================
-        boolean deleteResult = customerOrderRepository.deleteCustomerOrder(testOrderId);
+        boolean deleteResult = orderDetailRepository.deleteOrderDetail(testOrderDetailId);
 
-        System.out.println("\n=== DELETE CUSTOMER ORDER ===");
-        System.out.println("Delete customer order thanh cong khong? " + deleteResult);
+        System.out.println("\n=== DELETE ORDER DETAIL ===");
+        System.out.println("Delete order detail thanh cong khong? " + deleteResult);
 
-        CustomerOrder foundAfterDelete = customerOrderRepository.getCustomerOrderByID(testOrderId);
+        OrderDetail foundAfterDelete = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
 
-        System.out.println("\n=== READ CUSTOMER ORDER SAU DELETE ===");
+        System.out.println("\n=== READ ORDER DETAIL SAU DELETE ===");
         if (foundAfterDelete == null) {
-            System.out.println("Da xoa thanh cong, khong con order_id = " + testOrderId);
+            System.out.println("Da xoa thanh cong, khong con order_detail_id = " + testOrderDetailId);
         } else {
-            System.out.println("Van con customer order: " + foundAfterDelete);
+            System.out.println("Van con order detail: " + foundAfterDelete);
         }
     }
 }
