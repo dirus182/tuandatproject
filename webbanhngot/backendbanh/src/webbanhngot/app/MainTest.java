@@ -1,98 +1,98 @@
 package webbanhngot.app;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import webbanhngot.entity.OrderDetail;
-import webbanhngot.repository.OrderDetailRepository;
+import webbanhngot.entity.Payment;
+import webbanhngot.repository.PaymentRepository;
 
 public class MainTest {
     public static void main(String[] args) {
-        OrderDetailRepository orderDetailRepository = new OrderDetailRepository();
+        PaymentRepository paymentRepository = new PaymentRepository();
 
-        Integer testOrderDetailId = 9999;
+        Integer testPaymentId = 9999;
 
         // Xoa truoc neu lan truoc test bi dung giua chung
-        orderDetailRepository.deleteOrderDetail(testOrderDetailId);
+        paymentRepository.deletePayment(testPaymentId);
 
         // =========================
         // C - CREATE
         // =========================
-        OrderDetail newOrderDetail = new OrderDetail();
-        newOrderDetail.setOrder_detail_id(testOrderDetailId);
-        newOrderDetail.setOrder_id(170);
-        newOrderDetail.setCake_id(1);
-        newOrderDetail.setQuantity(2);
-        newOrderDetail.setSub_total(new BigDecimal("11.98"));
+        Payment newPayment = new Payment();
+        newPayment.setPayment_id(testPaymentId);
+        newPayment.setOrder_id(170);
+        newPayment.setPayment_method("cash");
+        newPayment.setPayment_status("pending");
+        newPayment.setPayment_date(LocalDateTime.now());
 
-        boolean addResult = orderDetailRepository.addOrderDetail(newOrderDetail);
+        boolean addResult = paymentRepository.addPayment(newPayment);
 
-        System.out.println("=== INSERT ORDER DETAIL ===");
-        System.out.println("Them order detail thanh cong khong? " + addResult);
+        System.out.println("=== INSERT PAYMENT ===");
+        System.out.println("Them payment thanh cong khong? " + addResult);
 
         // =========================
         // R - READ BY ID
         // =========================
-        OrderDetail foundAfterInsert = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
+        Payment foundAfterInsert = paymentRepository.getPaymentByID(testPaymentId);
 
-        System.out.println("\n=== READ ORDER DETAIL SAU INSERT ===");
+        System.out.println("\n=== READ PAYMENT SAU INSERT ===");
         if (foundAfterInsert != null) {
             System.out.println("Tim thay: " + foundAfterInsert);
         } else {
-            System.out.println("Khong tim thay order detail sau insert");
+            System.out.println("Khong tim thay payment sau insert");
         }
 
         // =========================
         // U - UPDATE
         // =========================
-        OrderDetail updatedOrderDetail = new OrderDetail();
-        updatedOrderDetail.setOrder_detail_id(testOrderDetailId);
-        updatedOrderDetail.setOrder_id(170);
-        updatedOrderDetail.setCake_id(2);
-        updatedOrderDetail.setQuantity(3);
-        updatedOrderDetail.setSub_total(new BigDecimal("19.47"));
+        Payment updatedPayment = new Payment();
+        updatedPayment.setPayment_id(testPaymentId);
+        updatedPayment.setOrder_id(170);
+        updatedPayment.setPayment_method("credit_card");
+        updatedPayment.setPayment_status("completed");
+        updatedPayment.setPayment_date(LocalDateTime.now());
 
-        boolean updateResult = orderDetailRepository.updateOrderDetail(testOrderDetailId, updatedOrderDetail);
+        boolean updateResult = paymentRepository.updatePayment(testPaymentId, updatedPayment);
 
-        System.out.println("\n=== UPDATE ORDER DETAIL ===");
-        System.out.println("Update order detail thanh cong khong? " + updateResult);
+        System.out.println("\n=== UPDATE PAYMENT ===");
+        System.out.println("Update payment thanh cong khong? " + updateResult);
 
-        OrderDetail foundAfterUpdate = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
+        Payment foundAfterUpdate = paymentRepository.getPaymentByID(testPaymentId);
 
-        System.out.println("\n=== READ ORDER DETAIL SAU UPDATE ===");
+        System.out.println("\n=== READ PAYMENT SAU UPDATE ===");
         if (foundAfterUpdate != null) {
             System.out.println("Sau update: " + foundAfterUpdate);
         } else {
-            System.out.println("Khong tim thay order detail sau update");
+            System.out.println("Khong tim thay payment sau update");
         }
 
         // =========================
         // R - READ ALL
         // =========================
-        ArrayList<OrderDetail> orderDetailList = orderDetailRepository.getAllOrderDetails();
+        ArrayList<Payment> paymentList = paymentRepository.getAllPayments();
 
-        System.out.println("\n=== DANH SACH ORDER DETAIL TU DATABASE ===");
-        System.out.println("So luong order detail hien tai: " + orderDetailList.size());
+        System.out.println("\n=== DANH SACH PAYMENT TU DATABASE ===");
+        System.out.println("So luong payment hien tai: " + paymentList.size());
 
-        for (int i = 0; i < Math.min(5, orderDetailList.size()); i++) {
-            System.out.println(orderDetailList.get(i));
+        for (int i = 0; i < Math.min(5, paymentList.size()); i++) {
+            System.out.println(paymentList.get(i));
         }
 
         // =========================
         // D - DELETE
         // =========================
-        boolean deleteResult = orderDetailRepository.deleteOrderDetail(testOrderDetailId);
+        boolean deleteResult = paymentRepository.deletePayment(testPaymentId);
 
-        System.out.println("\n=== DELETE ORDER DETAIL ===");
-        System.out.println("Delete order detail thanh cong khong? " + deleteResult);
+        System.out.println("\n=== DELETE PAYMENT ===");
+        System.out.println("Delete payment thanh cong khong? " + deleteResult);
 
-        OrderDetail foundAfterDelete = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
+        Payment foundAfterDelete = paymentRepository.getPaymentByID(testPaymentId);
 
-        System.out.println("\n=== READ ORDER DETAIL SAU DELETE ===");
+        System.out.println("\n=== READ PAYMENT SAU DELETE ===");
         if (foundAfterDelete == null) {
-            System.out.println("Da xoa thanh cong, khong con order_detail_id = " + testOrderDetailId);
+            System.out.println("Da xoa thanh cong, khong con payment_id = " + testPaymentId);
         } else {
-            System.out.println("Van con order detail: " + foundAfterDelete);
+            System.out.println("Van con payment: " + foundAfterDelete);
         }
     }
 }
