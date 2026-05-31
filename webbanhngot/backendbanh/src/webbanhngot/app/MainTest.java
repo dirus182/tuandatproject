@@ -3,96 +3,86 @@ package webbanhngot.app;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import webbanhngot.entity.Payment;
-import webbanhngot.repository.PaymentRepository;
+import webbanhngot.entity.Review;
+import webbanhngot.repository.ReviewRepository;
 
 public class MainTest {
     public static void main(String[] args) {
-        PaymentRepository paymentRepository = new PaymentRepository();
+        ReviewRepository reviewRepository = new ReviewRepository();
 
-        Integer testPaymentId = 9999;
+        Integer testReviewId = 9999;
 
         // Xoa truoc neu lan truoc test bi dung giua chung
-        paymentRepository.deletePayment(testPaymentId);
+        reviewRepository.deleteReview(testReviewId);
 
-        // =========================
         // C - CREATE
-        // =========================
-        Payment newPayment = new Payment();
-        newPayment.setPayment_id(testPaymentId);
-        newPayment.setOrder_id(170);
-        newPayment.setPayment_method("cash");
-        newPayment.setPayment_status("pending");
-        newPayment.setPayment_date(LocalDateTime.now());
+        Review newReview = new Review();
+        newReview.setReviews_id(testReviewId);
+        newReview.setOrder_detail_id(1001);
+        newReview.setCreate_at(LocalDateTime.now());
+        newReview.setCustomer_comment("Test review from JDBC");
+        newReview.setRating(5);
 
-        boolean addResult = paymentRepository.addPayment(newPayment);
+        boolean addResult = reviewRepository.addReview(newReview);
 
-        System.out.println("=== INSERT PAYMENT ===");
-        System.out.println("Them payment thanh cong khong? " + addResult);
+        System.out.println("=== INSERT REVIEW ===");
+        System.out.println("Them review thanh cong khong? " + addResult);
 
-        // =========================
         // R - READ BY ID
-        // =========================
-        Payment foundAfterInsert = paymentRepository.getPaymentByID(testPaymentId);
+        Review foundAfterInsert = reviewRepository.getReviewByID(testReviewId);
 
-        System.out.println("\n=== READ PAYMENT SAU INSERT ===");
+        System.out.println("\n=== READ REVIEW SAU INSERT ===");
         if (foundAfterInsert != null) {
             System.out.println("Tim thay: " + foundAfterInsert);
         } else {
-            System.out.println("Khong tim thay payment sau insert");
+            System.out.println("Khong tim thay review sau insert");
         }
 
-        // =========================
         // U - UPDATE
-        // =========================
-        Payment updatedPayment = new Payment();
-        updatedPayment.setPayment_id(testPaymentId);
-        updatedPayment.setOrder_id(170);
-        updatedPayment.setPayment_method("credit_card");
-        updatedPayment.setPayment_status("completed");
-        updatedPayment.setPayment_date(LocalDateTime.now());
+        Review updatedReview = new Review();
+        updatedReview.setReviews_id(testReviewId);
+        updatedReview.setOrder_detail_id(1001);
+        updatedReview.setCreate_at(LocalDateTime.now());
+        updatedReview.setCustomer_comment("Updated review from JDBC");
+        updatedReview.setRating(4);
 
-        boolean updateResult = paymentRepository.updatePayment(testPaymentId, updatedPayment);
+        boolean updateResult = reviewRepository.updateReview(testReviewId, updatedReview);
 
-        System.out.println("\n=== UPDATE PAYMENT ===");
-        System.out.println("Update payment thanh cong khong? " + updateResult);
+        System.out.println("\n=== UPDATE REVIEW ===");
+        System.out.println("Update review thanh cong khong? " + updateResult);
 
-        Payment foundAfterUpdate = paymentRepository.getPaymentByID(testPaymentId);
+        Review foundAfterUpdate = reviewRepository.getReviewByID(testReviewId);
 
-        System.out.println("\n=== READ PAYMENT SAU UPDATE ===");
+        System.out.println("\n=== READ REVIEW SAU UPDATE ===");
         if (foundAfterUpdate != null) {
             System.out.println("Sau update: " + foundAfterUpdate);
         } else {
-            System.out.println("Khong tim thay payment sau update");
+            System.out.println("Khong tim thay review sau update");
         }
 
-        // =========================
         // R - READ ALL
-        // =========================
-        ArrayList<Payment> paymentList = paymentRepository.getAllPayments();
+        ArrayList<Review> reviewList = reviewRepository.getAllReviews();
 
-        System.out.println("\n=== DANH SACH PAYMENT TU DATABASE ===");
-        System.out.println("So luong payment hien tai: " + paymentList.size());
+        System.out.println("\n=== DANH SACH REVIEW TU DATABASE ===");
+        System.out.println("So luong review hien tai: " + reviewList.size());
 
-        for (int i = 0; i < Math.min(5, paymentList.size()); i++) {
-            System.out.println(paymentList.get(i));
+        for (int i = 0; i < Math.min(5, reviewList.size()); i++) {
+            System.out.println(reviewList.get(i));
         }
 
-        // =========================
         // D - DELETE
-        // =========================
-        boolean deleteResult = paymentRepository.deletePayment(testPaymentId);
+        boolean deleteResult = reviewRepository.deleteReview(testReviewId);
 
-        System.out.println("\n=== DELETE PAYMENT ===");
-        System.out.println("Delete payment thanh cong khong? " + deleteResult);
+        System.out.println("\n=== DELETE REVIEW ===");
+        System.out.println("Delete review thanh cong khong? " + deleteResult);
 
-        Payment foundAfterDelete = paymentRepository.getPaymentByID(testPaymentId);
+        Review foundAfterDelete = reviewRepository.getReviewByID(testReviewId);
 
-        System.out.println("\n=== READ PAYMENT SAU DELETE ===");
+        System.out.println("\n=== READ REVIEW SAU DELETE ===");
         if (foundAfterDelete == null) {
-            System.out.println("Da xoa thanh cong, khong con payment_id = " + testPaymentId);
+            System.out.println("Da xoa thanh cong, khong con reviews_id = " + testReviewId);
         } else {
-            System.out.println("Van con payment: " + foundAfterDelete);
+            System.out.println("Van con review: " + foundAfterDelete);
         }
     }
 }
