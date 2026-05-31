@@ -3,53 +3,96 @@ package webbanhngot.service;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Review;
+import webbanhngot.repository.ReviewRepository;
 
 public class ReviewService {
 
-	private ArrayList<Review> reviewlist = new ArrayList<Review>();
+    private ReviewRepository reviewRepository = new ReviewRepository();
 
-	// C - Create
-	public void addReview(Review review) {
-		reviewlist.add(review);
-	}
+    // C - Create
+    public boolean addReview(Review review) {
+        if (!isValidReview(review)) {
+            return false;
+        }
 
-	// R - Read all
-	public ArrayList<Review> getAllReviews() {
-		return reviewlist;
-	}
+        Review existingReview = reviewRepository.getReviewByID(review.getReviews_id());
 
-	// R - Read by reviews_id
-	public Review getReviewByID(Integer reviews_id) {
-		for (Review review : reviewlist) {
-			if (review.getReviews_id().equals(reviews_id)) {
-				return review;
-			}
-		}
-		return null;
-	}
+        if (existingReview != null) {
+            return false;
+        }
 
-	// U - Update
-	public boolean updateReview(Integer reviews_id, Review newReview) {
-		for (Review review : reviewlist) {
-			if (review.getReviews_id().equals(reviews_id)) {
-				review.setOrder_detail_id(newReview.getOrder_detail_id());
-				review.setCreate_at(newReview.getCreate_at());
-				review.setCustomer_comment(newReview.getCustomer_comment());
-				review.setRating(newReview.getRating());
-				return true;
-			}
-		}
-		return false;
-	}
+        return reviewRepository.addReview(review);
+    }
 
-	// D - Delete
-	public boolean deleteReview(Integer reviews_id) {
-		for (int i = 0; i < reviewlist.size(); i++) {
-			if (reviewlist.get(i).getReviews_id().equals(reviews_id)) {
-				reviewlist.remove(i);
-				return true;
-			}
-		}
-		return false;
-	}
+    // R - Read all
+    public ArrayList<Review> getAllReviews() {
+        return reviewRepository.getAllReviews();
+    }
+
+    // R - Read by reviews_id
+    public Review getReviewByID(Integer reviews_id) {
+        if (reviews_id == null) {
+            return null;
+        }
+
+        return reviewRepository.getReviewByID(reviews_id);
+    }
+
+    // U - Update
+    public boolean updateReview(Integer reviews_id, Review newReview) {
+        if (reviews_id == null || !isValidReview(newReview)) {
+            return false;
+        }
+
+        Review existingReview = reviewRepository.getReviewByID(reviews_id);
+
+        if (existingReview == null) {
+            return false;
+        }
+
+        return reviewRepository.updateReview(reviews_id, newReview);
+    }
+
+    // D - Delete
+    public boolean deleteReview(Integer reviews_id) {
+        if (reviews_id == null) {
+            return false;
+        }
+
+        Review existingReview = reviewRepository.getReviewByID(reviews_id);
+
+        if (existingReview == null) {
+            return false;
+        }
+
+        return reviewRepository.deleteReview(reviews_id);
+    }
+
+    private boolean isValidReview(Review review) {
+        if (review == null) {
+            return false;
+        }
+
+        if (review.getReviews_id() == null || review.getReviews_id() <= 0) {
+            return false;
+        }
+
+        if (review.getOrder_detail_id() == null || review.getOrder_detail_id() <= 0) {
+            return false;
+        }
+
+        if (review.getCreate_at() == null) {
+            return false;
+        }
+
+        if (review.getCustomer_comment() == null || review.getCustomer_comment().isBlank()) {
+            return false;
+        }
+
+        if (review.getRating() == null || review.getRating() < 1 || review.getRating() > 5) {
+            return false;
+        }
+
+        return true;
+    }
 }
