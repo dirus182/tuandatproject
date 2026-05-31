@@ -1,4 +1,4 @@
-package com.webbanhngot.backendbanh.repository;;
+package com.com.webbanhngot.backendbackendbanh.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import webbanhngot.db.DBConnection;
-import webbanhngot.entity.Payment;
+import com.com.webbanhngot.backendbackendbanh.db.DBConnection;
+import com.com.webbanhngot.backendbackendbanh.entity.Payment;
 
 public class PaymentRepository {
 

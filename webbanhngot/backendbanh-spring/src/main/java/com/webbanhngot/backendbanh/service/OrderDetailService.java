@@ -1,11 +1,11 @@
-package webbanhngot.service;
+package com.webbanhngot.backendbanh.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import webbanhngot.entity.OrderDetail;
-import com.webbanhngot.backendbanh.repository;.OrderDetailRepository;
-import com.webbanhngot.backendbanh.repository;.ReviewRepository;
+import com.webbanhngot.backendbanh.entity.OrderDetail;
+import com.webbanhngot.backendbanh.repository.OrderDetailRepository;
+import com.webbanhngot.backendbanh.repository.ReviewRepository;
 
 public class OrderDetailService {
 

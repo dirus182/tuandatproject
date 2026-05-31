@@ -1,9 +1,9 @@
-package webbanhngot.service;
+package com.webbanhngot.backendbanh.service;
 
 import java.util.ArrayList;
 
-import webbanhngot.entity.Review;
-import com.webbanhngot.backendbanh.repository;.ReviewRepository;
+import com.webbanhngot.backendbanh.entity.Review;
+import com.webbanhngot.backendbanh.repository.ReviewRepository;
 
 public class ReviewService {
 

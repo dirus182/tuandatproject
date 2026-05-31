@@ -1,11 +1,11 @@
-package webbanhngot.service;
+package com.webbanhngot.backendbanh.service;
 
 import java.util.ArrayList;
 
-import webbanhngot.entity.Customer;
-import webbanhngot.entity.CustomerOrder;
-import com.webbanhngot.backendbanh.repository;.CustomerRepository;
-import com.webbanhngot.backendbanh.repository;.CustomerOrderRepository;
+import com.webbanhngot.backendbanh.entity.Customer;
+import com.webbanhngot.backendbanh.entity.CustomerOrder;
+import com.webbanhngot.backendbanh.repository.CustomerRepository;
+import com.webbanhngot.backendbanh.repository.CustomerOrderRepository;
 
 public class CustomerService {
 

@@ -1,9 +1,9 @@
-package webbanhngot.service;
+package com.webbanhngot.backendbanh.service;
 
 import java.util.ArrayList;
 
-import webbanhngot.entity.Payment;
-import com.webbanhngot.backendbanh.repository;.PaymentRepository;
+import com.webbanhngot.backendbanh.entity.Payment;
+import com.webbanhngot.backendbanh.repository.PaymentRepository;
 
 public class PaymentService {
 

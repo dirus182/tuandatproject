@@ -1,4 +1,4 @@
-package com.webbanhngot.backendbanh.repository;;
+package com.com.webbanhngot.backendbackendbanh.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import webbanhngot.db.DBConnection;
-import webbanhngot.entity.OptionCake;
+import com.com.webbanhngot.backendbackendbanh.db.DBConnection;
+import com.com.webbanhngot.backendbackendbanh.entity.OptionCake;
 /*Lấy tất cả option cake
 Lấy option cake theo ID
 Thêm option cake

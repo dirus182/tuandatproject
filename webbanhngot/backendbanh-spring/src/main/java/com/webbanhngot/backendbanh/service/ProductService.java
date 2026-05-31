@@ -1,10 +1,10 @@
-package webbanhngot.service;
+package com.webbanhngot.backendbanh.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import webbanhngot.entity.Product;
-import com.webbanhngot.backendbanh.repository;.ProductRepository;
+import com.webbanhngot.backendbanh.entity.Product;
+import com.webbanhngot.backendbanh.repository.ProductRepository;
 
 public class ProductService {
 

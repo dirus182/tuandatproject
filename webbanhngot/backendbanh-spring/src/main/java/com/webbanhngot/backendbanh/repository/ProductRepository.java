@@ -1,4 +1,4 @@
-package com.webbanhngot.backendbanh.repository;;
+package com.com.webbanhngot.backendbackendbanh.repository;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Connection;
@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Timestamp;
 import java.sql.Types;
-import webbanhngot.db.DBConnection;
-import webbanhngot.entity.Product;
+import com.com.webbanhngot.backendbackendbanh.db.DBConnection;
+import com.com.webbanhngot.backendbackendbanh.entity.Product;
 
 
 public class ProductRepository {

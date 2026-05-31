@@ -1,9 +1,4 @@
 {
-    "java.project.sourcePaths": [
-        "webbanhngot/backendbanh/src"
-    ],
-    "java.project.outputPath": "webbanhngot/backendbanh/bin",
-    "java.project.referencedLibraries": [
-        "webbanhngot/backendbanh/lib/**/*.jar"
-    ]
+    "java.import.maven.enabled": true,
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
