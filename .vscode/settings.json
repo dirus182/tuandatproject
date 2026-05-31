@@ -1,6 +1,9 @@
 {
+    "java.project.sourcePaths": [
+        "webbanhngot/backendbanh/src"
+    ],
+    "java.project.outputPath": "webbanhngot/backendbanh/bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "webbanhngot/backendbanh/lib/postgresql-42.7.11.jar"
+        "webbanhngot/backendbanh/lib/**/*.jar"
     ]
 }

@@ -3,63 +3,133 @@ package webbanhngot.service;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Payment;
+import webbanhngot.repository.PaymentRepository;
 
 public class PaymentService {
-	private ArrayList<Payment> paymentlist = new ArrayList<Payment>();
 
-//C - Create
-	public void addPayment(Payment payment) {
-		paymentlist.add(payment);
-	}
+    private PaymentRepository paymentRepository = new PaymentRepository();
 
-//R - Read all
-	public ArrayList<Payment> getAllPayments() {
-		return paymentlist;
-	}
+    // C - Create
+    public boolean addPayment(Payment payment) {
+        if (!isValidPayment(payment)) {
+            return false;
+        }
 
-// R - read by payment_id
-	public Payment getPaymentByID(Integer payment_id) {
-		for (Payment payment : paymentlist) {
-			if (payment.getPayment_id().equals(payment_id)) {
-				return payment;
-			}
-		}
-		return null;
-	}
+        Payment existingPayment = paymentRepository.getPaymentByID(payment.getPayment_id());
 
-	// R - Read by order_id
+        if (existingPayment != null) {
+            return false;
+        }
 
-	public Payment getPaymentByOrderID(Integer order_id) {
-		for (Payment payment : paymentlist) {
-			if (payment.getOrder_id().equals(order_id)) {
-				return payment;
-			}
-		}
-		return null;
-	}
+        return paymentRepository.addPayment(payment);
+    }
 
-//U - Update 
-	public boolean updatePayment(Integer payment_id, Payment newPayment) {
-		for (Payment payment : paymentlist) {
-			if (payment.getPayment_id().equals(payment_id)) {
-				payment.setOrder_id(newPayment.getOrder_id());
-				payment.setPayment_method(newPayment.getPayment_method());
-				payment.setPayment_status(newPayment.getPayment_status());
-				payment.setPayment_date(newPayment.getPayment_date());
-				return true;
-			}
-		}
-		return false;
-	}
+    // R - Read all
+    public ArrayList<Payment> getAllPayments() {
+        return paymentRepository.getAllPayments();
+    }
 
-	// D - Delete
-	public boolean deletePayment(Integer payment_id) {
-		for (int i = 0; i < paymentlist.size(); i++) {
-			if (paymentlist.get(i).getPayment_id().equals(payment_id)) {
-				paymentlist.remove(i);
-				return true;
-			}
-		}
-		return false;
-	}
+    // R - Read by payment_id
+    public Payment getPaymentByID(Integer payment_id) {
+        if (payment_id == null) {
+            return null;
+        }
+
+        return paymentRepository.getPaymentByID(payment_id);
+    }
+
+    // R - Read by order_id
+    public Payment getPaymentByOrderID(Integer order_id) {
+        if (order_id == null) {
+            return null;
+        }
+
+        return paymentRepository.getPaymentByOrderID(order_id);
+    }
+
+    // U - Update
+    public boolean updatePayment(Integer payment_id, Payment newPayment) {
+        if (payment_id == null || !isValidPayment(newPayment)) {
+            return false;
+        }
+
+        Payment existingPayment = paymentRepository.getPaymentByID(payment_id);
+
+        if (existingPayment == null) {
+            return false;
+        }
+
+        return paymentRepository.updatePayment(payment_id, newPayment);
+    }
+
+    // D - Delete by payment_id
+    public boolean deletePayment(Integer payment_id) {
+        if (payment_id == null) {
+            return false;
+        }
+
+        Payment existingPayment = paymentRepository.getPaymentByID(payment_id);
+
+        if (existingPayment == null) {
+            return false;
+        }
+
+        return paymentRepository.deletePayment(payment_id);
+    }
+
+    // D - Delete by order_id
+    public boolean deletePaymentsByOrderID(Integer order_id) {
+        if (order_id == null) {
+            return false;
+        }
+
+        return paymentRepository.deletePaymentsByOrderID(order_id);
+    }
+
+    private boolean isValidPayment(Payment payment) {
+        if (payment == null) {
+            return false;
+        }
+
+        if (payment.getPayment_id() == null || payment.getPayment_id() <= 0) {
+            return false;
+        }
+
+        if (payment.getOrder_id() == null || payment.getOrder_id() <= 0) {
+            return false;
+        }
+
+        if (payment.getPayment_method() == null || payment.getPayment_method().isBlank()) {
+            return false;
+        }
+
+        if (!isValidPaymentMethod(payment.getPayment_method())) {
+            return false;
+        }
+
+        if (payment.getPayment_status() == null || payment.getPayment_status().isBlank()) {
+            return false;
+        }
+
+        if (!isValidPaymentStatus(payment.getPayment_status())) {
+            return false;
+        }
+
+        if (payment.getPayment_date() == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidPaymentMethod(String paymentMethod) {
+        return paymentMethod.equals("paypal")
+                || paymentMethod.equals("cash")
+                || paymentMethod.equals("credit_card");
+    }
+
+    private boolean isValidPaymentStatus(String paymentStatus) {
+        return paymentStatus.equals("pending")
+                || paymentStatus.equals("completed");
+    }
 }

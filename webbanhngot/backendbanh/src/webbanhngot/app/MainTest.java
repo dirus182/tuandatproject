@@ -1,88 +1,100 @@
 package webbanhngot.app;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
+import webbanhngot.entity.CustomerOrder;
+import webbanhngot.entity.OrderDetail;
+import webbanhngot.entity.Payment;
 import webbanhngot.entity.Review;
+import webbanhngot.repository.OrderDetailRepository;
+import webbanhngot.repository.PaymentRepository;
 import webbanhngot.repository.ReviewRepository;
+import webbanhngot.service.CustomerOrderService;
 
 public class MainTest {
     public static void main(String[] args) {
+        CustomerOrderService customerOrderService = new CustomerOrderService();
+        OrderDetailRepository orderDetailRepository = new OrderDetailRepository();
         ReviewRepository reviewRepository = new ReviewRepository();
+        PaymentRepository paymentRepository = new PaymentRepository();
 
+        Integer testOrderId = 9999;
+        Integer testOrderDetailId = 9999;
         Integer testReviewId = 9999;
+        Integer testPaymentId = 9999;
 
-        // Xoa truoc neu lan truoc test bi dung giua chung
-        reviewRepository.deleteReview(testReviewId);
+        // Don rac test cu neu co
+        customerOrderService.deleteCustomerOrder(testOrderId);
 
-        // C - CREATE
-        Review newReview = new Review();
-        newReview.setReviews_id(testReviewId);
-        newReview.setOrder_detail_id(1001);
-        newReview.setCreate_at(LocalDateTime.now());
-        newReview.setCustomer_comment("Test review from JDBC");
-        newReview.setRating(5);
+        // 1. Tao customer order
+        CustomerOrder order = new CustomerOrder();
+        order.setOrder_id(testOrderId);
+        order.setCustomer_id(5);
+        order.setStatus("pending");
+        order.setOrder_date(LocalDateTime.now());
+        order.setTotal_price(new BigDecimal("99.99"));
 
-        boolean addResult = reviewRepository.addReview(newReview);
+        boolean addOrderResult = customerOrderService.addCustomerOrder(order);
 
-        System.out.println("=== INSERT REVIEW ===");
-        System.out.println("Them review thanh cong khong? " + addResult);
+        System.out.println("=== INSERT CUSTOMER ORDER ===");
+        System.out.println("Them order thanh cong khong? " + addOrderResult);
 
-        // R - READ BY ID
-        Review foundAfterInsert = reviewRepository.getReviewByID(testReviewId);
+        // 2. Tao order detail con cua order
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrder_detail_id(testOrderDetailId);
+        orderDetail.setOrder_id(testOrderId);
+        orderDetail.setCake_id(1);
+        orderDetail.setQuantity(2);
+        orderDetail.setSub_total(new BigDecimal("11.98"));
 
-        System.out.println("\n=== READ REVIEW SAU INSERT ===");
-        if (foundAfterInsert != null) {
-            System.out.println("Tim thay: " + foundAfterInsert);
-        } else {
-            System.out.println("Khong tim thay review sau insert");
-        }
+        boolean addOrderDetailResult = orderDetailRepository.addOrderDetail(orderDetail);
 
-        // U - UPDATE
-        Review updatedReview = new Review();
-        updatedReview.setReviews_id(testReviewId);
-        updatedReview.setOrder_detail_id(1001);
-        updatedReview.setCreate_at(LocalDateTime.now());
-        updatedReview.setCustomer_comment("Updated review from JDBC");
-        updatedReview.setRating(4);
+        System.out.println("\n=== INSERT ORDER DETAIL ===");
+        System.out.println("Them order detail thanh cong khong? " + addOrderDetailResult);
 
-        boolean updateResult = reviewRepository.updateReview(testReviewId, updatedReview);
+        // 3. Tao review con cua order detail
+        Review review = new Review();
+        review.setReviews_id(testReviewId);
+        review.setOrder_detail_id(testOrderDetailId);
+        review.setCreate_at(LocalDateTime.now());
+        review.setCustomer_comment("Test review before delete order");
+        review.setRating(5);
 
-        System.out.println("\n=== UPDATE REVIEW ===");
-        System.out.println("Update review thanh cong khong? " + updateResult);
+        boolean addReviewResult = reviewRepository.addReview(review);
 
-        Review foundAfterUpdate = reviewRepository.getReviewByID(testReviewId);
+        System.out.println("\n=== INSERT REVIEW ===");
+        System.out.println("Them review thanh cong khong? " + addReviewResult);
 
-        System.out.println("\n=== READ REVIEW SAU UPDATE ===");
-        if (foundAfterUpdate != null) {
-            System.out.println("Sau update: " + foundAfterUpdate);
-        } else {
-            System.out.println("Khong tim thay review sau update");
-        }
+        // 4. Tao payment con cua order
+        Payment payment = new Payment();
+        payment.setPayment_id(testPaymentId);
+        payment.setOrder_id(testOrderId);
+        payment.setPayment_method("cash");
+        payment.setPayment_status("pending");
+        payment.setPayment_date(LocalDateTime.now());
 
-        // R - READ ALL
-        ArrayList<Review> reviewList = reviewRepository.getAllReviews();
+        boolean addPaymentResult = paymentRepository.addPayment(payment);
 
-        System.out.println("\n=== DANH SACH REVIEW TU DATABASE ===");
-        System.out.println("So luong review hien tai: " + reviewList.size());
+        System.out.println("\n=== INSERT PAYMENT ===");
+        System.out.println("Them payment thanh cong khong? " + addPaymentResult);
 
-        for (int i = 0; i < Math.min(5, reviewList.size()); i++) {
-            System.out.println(reviewList.get(i));
-        }
+        // 5. Xoa order bang CustomerOrderService
+        boolean deleteOrderResult = customerOrderService.deleteCustomerOrder(testOrderId);
 
-        // D - DELETE
-        boolean deleteResult = reviewRepository.deleteReview(testReviewId);
+        System.out.println("\n=== DELETE CUSTOMER ORDER WITH CHILDREN ===");
+        System.out.println("Xoa order kem bang con thanh cong khong? " + deleteOrderResult);
 
-        System.out.println("\n=== DELETE REVIEW ===");
-        System.out.println("Delete review thanh cong khong? " + deleteResult);
+        // 6. Check lai
+        CustomerOrder foundOrder = customerOrderService.getCustomerOrderByID(testOrderId);
+        OrderDetail foundOrderDetail = orderDetailRepository.getOrderDetailByID(testOrderDetailId);
+        Review foundReview = reviewRepository.getReviewByID(testReviewId);
+        Payment foundPayment = paymentRepository.getPaymentByID(testPaymentId);
 
-        Review foundAfterDelete = reviewRepository.getReviewByID(testReviewId);
-
-        System.out.println("\n=== READ REVIEW SAU DELETE ===");
-        if (foundAfterDelete == null) {
-            System.out.println("Da xoa thanh cong, khong con reviews_id = " + testReviewId);
-        } else {
-            System.out.println("Van con review: " + foundAfterDelete);
-        }
+        System.out.println("\n=== CHECK SAU DELETE ===");
+        System.out.println("Order con khong? " + (foundOrder != null));
+        System.out.println("OrderDetail con khong? " + (foundOrderDetail != null));
+        System.out.println("Review con khong? " + (foundReview != null));
+        System.out.println("Payment con khong? " + (foundPayment != null));
     }
 }

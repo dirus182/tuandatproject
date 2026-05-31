@@ -60,6 +60,32 @@ public class PaymentRepository {
         return null;
     }
 
+    public Payment getPaymentByOrderID(Integer order_id) {
+        String sql = "SELECT payment_id, order_id, payment_method, payment_status, payment_date "
+                + "FROM payment "
+                + "WHERE order_id = ? "
+                + "ORDER BY payment_id "
+                + "LIMIT 1";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, order_id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToPayment(resultSet);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public boolean addPayment(Payment payment) {
         String sql = "INSERT INTO payment "
                 + "(payment_id, order_id, payment_method, payment_status, payment_date) "
@@ -132,6 +158,28 @@ public class PaymentRepository {
 
             int rowsDeleted = statement.executeUpdate();
             return rowsDeleted > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean deletePaymentsByOrderID(Integer order_id) {
+        String sql = "DELETE FROM payment WHERE order_id = ?";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, order_id);
+
+            int rowsDeleted = statement.executeUpdate();
+
+            // Nếu rowsDeleted > 0: có payment và đã xóa.
+            // Nếu rowsDeleted == 0: không có payment phụ thuộc, vẫn coi là không lỗi.
+            return rowsDeleted >= 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

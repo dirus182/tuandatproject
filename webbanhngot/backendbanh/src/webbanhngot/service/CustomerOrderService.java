@@ -1,55 +1,138 @@
 package webbanhngot.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import webbanhngot.entity.CustomerOrder;
+import webbanhngot.repository.CustomerOrderRepository;
+import webbanhngot.repository.OrderDetailRepository;
+import webbanhngot.repository.PaymentRepository;
+import webbanhngot.repository.ReviewRepository;
 
 public class CustomerOrderService {
 
-	private ArrayList<CustomerOrder> customerorderlist = new ArrayList<CustomerOrder>();
+    private CustomerOrderRepository customerOrderRepository = new CustomerOrderRepository();
+    private PaymentRepository paymentRepository = new PaymentRepository();
+    private OrderDetailRepository orderDetailRepository = new OrderDetailRepository();
+    private ReviewRepository reviewRepository = new ReviewRepository();
 
-	// C - Create
-	public void addCustomerOrder(CustomerOrder customerOrder) {
-		customerorderlist.add(customerOrder);
-	}
+    // C - Create
+    public boolean addCustomerOrder(CustomerOrder customerOrder) {
+        if (!isValidCustomerOrder(customerOrder)) {
+            return false;
+        }
 
-	// R - Read all
-	public ArrayList<CustomerOrder> getAllCustomerOrders() {
-		return customerorderlist;
-	}
+        CustomerOrder existingOrder = customerOrderRepository.getCustomerOrderByID(customerOrder.getOrder_id());
 
-	// R - Read by order_id
-	public CustomerOrder getCustomerOrderByID(Integer order_id) {
-		for (CustomerOrder customerOrder : customerorderlist) {
-			if (customerOrder.getOrder_id().equals(order_id)) {
-				return customerOrder;
-			}
-		}
-		return null;
-	}
+        if (existingOrder != null) {
+            return false;
+        }
 
-	// U - Update
-	public boolean updateCustomerOrder(Integer order_id, CustomerOrder newCustomerOrder) {
-		for (CustomerOrder customerOrder : customerorderlist) {
-			if (customerOrder.getOrder_id().equals(order_id)) {
-				customerOrder.setCustomer_id(newCustomerOrder.getCustomer_id());
-				customerOrder.setStatus(newCustomerOrder.getStatus());
-				customerOrder.setOrder_date(newCustomerOrder.getOrder_date());
-				customerOrder.setTotal_price(newCustomerOrder.getTotal_price());
-				return true;
-			}
-		}
-		return false;
-	}
+        return customerOrderRepository.addCustomerOrder(customerOrder);
+    }
 
-	// D - Delete
-	public boolean deleteCustomerOrder(Integer order_id) {
-		for (int i = 0; i < customerorderlist.size(); i++) {
-			if (customerorderlist.get(i).getOrder_id().equals(order_id)) {
-				customerorderlist.remove(i);
-				return true;
-			}
-		}
-		return false;
-	}
+    // R - Read all
+    public ArrayList<CustomerOrder> getAllCustomerOrders() {
+        return customerOrderRepository.getAllCustomerOrders();
+    }
+
+    // R - Read by ID
+    public CustomerOrder getCustomerOrderByID(Integer order_id) {
+        if (order_id == null) {
+            return null;
+        }
+
+        return customerOrderRepository.getCustomerOrderByID(order_id);
+    }
+
+    // U - Update
+    public boolean updateCustomerOrder(Integer order_id, CustomerOrder newCustomerOrder) {
+        if (order_id == null || !isValidCustomerOrder(newCustomerOrder)) {
+            return false;
+        }
+
+        CustomerOrder existingOrder = customerOrderRepository.getCustomerOrderByID(order_id);
+
+        if (existingOrder == null) {
+            return false;
+        }
+
+        return customerOrderRepository.updateCustomerOrder(order_id, newCustomerOrder);
+    }
+
+    // D - Delete
+    public boolean deleteCustomerOrder(Integer order_id) {
+        if (order_id == null) {
+            return false;
+        }
+
+        CustomerOrder existingOrder = customerOrderRepository.getCustomerOrderByID(order_id);
+
+        if (existingOrder == null) {
+            return false;
+        }
+
+        // 1. Xoa review truoc vi review phu thuoc vao orderdetail
+        boolean deleteReviewResult = reviewRepository.deleteReviewsByOrderID(order_id);
+
+        if (!deleteReviewResult) {
+            return false;
+        }
+
+        // 2. Xoa orderdetail sau khi review da duoc xoa
+        boolean deleteOrderDetailResult = orderDetailRepository.deleteOrderDetailsByOrderID(order_id);
+
+        if (!deleteOrderDetailResult) {
+            return false;
+        }
+
+        // 3. Xoa payment phu thuoc vao customerorder
+        boolean deletePaymentResult = paymentRepository.deletePaymentsByOrderID(order_id);
+
+        if (!deletePaymentResult) {
+            return false;
+        }
+
+        // 4. Cuoi cung moi xoa customerorder
+        return customerOrderRepository.deleteCustomerOrder(order_id);
+    }
+
+    private boolean isValidCustomerOrder(CustomerOrder customerOrder) {
+        if (customerOrder == null) {
+            return false;
+        }
+
+        if (customerOrder.getOrder_id() == null || customerOrder.getOrder_id() <= 0) {
+            return false;
+        }
+
+        if (customerOrder.getCustomer_id() == null || customerOrder.getCustomer_id() <= 0) {
+            return false;
+        }
+
+        if (customerOrder.getStatus() == null || customerOrder.getStatus().isBlank()) {
+            return false;
+        }
+
+        if (!isValidStatus(customerOrder.getStatus())) {
+            return false;
+        }
+
+        if (customerOrder.getOrder_date() == null) {
+            return false;
+        }
+
+        if (customerOrder.getTotal_price() == null ||
+                customerOrder.getTotal_price().compareTo(BigDecimal.ZERO) < 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidStatus(String status) {
+        return status.equals("pending")
+                || status.equals("shipped")
+                || status.equals("canceled");
+    }
 }

@@ -140,7 +140,50 @@ public class ReviewRepository {
 
         return false;
     }
+     public boolean deleteReviewsByOrderDetailID(Integer order_detail_id) {
+    String sql = "DELETE FROM review WHERE order_detail_id = ?";
 
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, order_detail_id);
+
+        int rowsDeleted = statement.executeUpdate();
+
+        // rowsDeleted = 0 van khong phai loi
+        return rowsDeleted >= 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
+public boolean deleteReviewsByOrderID(Integer order_id) {
+    String sql = "DELETE FROM review "
+            + "WHERE order_detail_id IN ("
+            + "SELECT order_detail_id FROM orderdetail WHERE order_id = ?"
+            + ")";
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, order_id);
+
+        int rowsDeleted = statement.executeUpdate();
+
+        // rowsDeleted = 0 van khong phai loi
+        return rowsDeleted >= 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
     private Review mapResultSetToReview(ResultSet resultSet) throws SQLException {
         Review review = new Review();
 

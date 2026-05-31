@@ -128,6 +128,47 @@ public class OrderDetailRepository {
 
         return false;
     }
+    public boolean deleteOrderDetailsByOrderID(Integer order_id) {
+    String sql = "DELETE FROM orderdetail WHERE order_id = ?";
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, order_id);
+
+        int rowsDeleted = statement.executeUpdate();
+
+        // rowsDeleted = 0 van khong phai loi
+        return rowsDeleted >= 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
+public boolean deleteOrderDetailsByCakeID(Integer cake_id) {
+    String sql = "DELETE FROM orderdetail WHERE cake_id = ?";
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, cake_id);
+
+        int rowsDeleted = statement.executeUpdate();
+
+        // rowsDeleted = 0 van khong phai loi
+        return rowsDeleted >= 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
 
     private OrderDetail mapResultSetToOrderDetail(ResultSet resultSet) throws SQLException {
         OrderDetail orderDetail = new OrderDetail();

@@ -1,57 +1,99 @@
 package webbanhngot.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Product;
+import webbanhngot.repository.ProductRepository;
 
 public class ProductService {
 
-	private ArrayList<Product> productlist = new ArrayList<Product>();
+    private ProductRepository productRepository = new ProductRepository();
 
-	// C - Create
-	public void addProduct(Product product) {
-		productlist.add(product);
-	}
+    // C - Create
+    public boolean addProduct(Product product) {
+        if (!isValidProduct(product)) {
+            return false;
+        }
 
-	// R - Read all
-	public ArrayList<Product> getAllProducts() {
-		return productlist;
-	}
+        Product existingProduct = productRepository.getProductByCakeID(product.getCake_id());
 
-	// R - Read by cake_id
-	public Product getProductByCakeID(Integer cake_id) {
-		for (Product product : productlist) {
-			if (product.getCake_id().equals(cake_id)) {
-				return product;
-			}
-		}
-		return null;
-	}
+        if (existingProduct != null) {
+            return false;
+        }
 
-	// U - Update
-	public boolean updateProduct(Integer cake_id, Product newProduct) {
-		for (Product product : productlist) {
-			if (product.getCake_id().equals(cake_id)) {
-				product.setOption_cake_id(newProduct.getOption_cake_id());
-				product.setQuantity(newProduct.getQuantity());
-				product.setPrice(newProduct.getPrice());
-				product.setDescription(newProduct.getDescription());
-				product.setCake_name(newProduct.getCake_name());
-				product.setCreate_at(newProduct.getCreate_at());
-				return true;
-			}
-		}
-		return false;
-	}
+        return productRepository.addProduct(product);
+    }
 
-	// D - Delete
-	public boolean deleteProduct(Integer cake_id) {
-		for (int i = 0; i < productlist.size(); i++) {
-			if (productlist.get(i).getCake_id().equals(cake_id)) {
-				productlist.remove(i);
-				return true;
-			}
-		}
-		return false;
-	}
+    // R - Read all
+    public ArrayList<Product> getAllProducts() {
+        return productRepository.getAllProducts();
+    }
+
+    // R - Read by cake_id
+    public Product getProductByCakeID(Integer cake_id) {
+        if (cake_id == null) {
+            return null;
+        }
+
+        return productRepository.getProductByCakeID(cake_id);
+    }
+
+    // U - Update
+    public boolean updateProduct(Integer cake_id, Product newProduct) {
+        if (cake_id == null || !isValidProduct(newProduct)) {
+            return false;
+        }
+
+        Product existingProduct = productRepository.getProductByCakeID(cake_id);
+
+        if (existingProduct == null) {
+            return false;
+        }
+
+        return productRepository.updateProduct(cake_id, newProduct);
+    }
+
+    // D - Delete
+    public boolean deleteProduct(Integer cake_id) {
+        if (cake_id == null) {
+            return false;
+        }
+
+        Product existingProduct = productRepository.getProductByCakeID(cake_id);
+
+        if (existingProduct == null) {
+            return false;
+        }
+
+        return productRepository.deleteProduct(cake_id);
+    }
+
+    private boolean isValidProduct(Product product) {
+        if (product == null) {
+            return false;
+        }
+
+        if (product.getCake_id() == null || product.getCake_id() <= 0) {
+            return false;
+        }
+
+        if (product.getOption_cake_id() == null || product.getOption_cake_id() <= 0) {
+            return false;
+        }
+
+        if (product.getQuantity() == null || product.getQuantity() < 0) {
+            return false;
+        }
+
+        if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+
+        if (product.getCake_name() == null || product.getCake_name().isBlank()) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -60,7 +60,33 @@ public class CustomerOrderRepository {
 
         return null;
     }
+public ArrayList<CustomerOrder> getCustomerOrdersByCustomerID(Integer customer_id) {
+    ArrayList<CustomerOrder> customerOrderList = new ArrayList<CustomerOrder>();
 
+    String sql = "SELECT order_id, customer_id, status, order_date, total_price "
+            + "FROM customerorder "
+            + "WHERE customer_id = ? "
+            + "ORDER BY order_id";
+
+    try (
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, customer_id);
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                CustomerOrder customerOrder = mapResultSetToCustomerOrder(resultSet);
+                customerOrderList.add(customerOrder);
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return customerOrderList;
+}
     public boolean addCustomerOrder(CustomerOrder customerOrder) {
         String sql = "INSERT INTO customerorder "
                 + "(order_id, customer_id, status, order_date, total_price) "
@@ -160,3 +186,12 @@ public class CustomerOrderRepository {
         return customerOrder;
     }
 }
+/*
+Xóa payment:
+payment
+
+Xóa orderdetail:
+review → orderdetail
+
+Xóa customerorder:
+review → orderdetail → payment → customerorder */
