@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import webbanhngot.entity.OrderDetail;
-import com.webbanhngot.backendbanh.repository;.OrderDetailRepository;
-import com.webbanhngot.backendbanh.repository;.ReviewRepository;
+import webbanhngot.repository.OrderDetailRepository;
+import webbanhngot.repository.ReviewRepository;
 
 public class OrderDetailService {
 

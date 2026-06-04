@@ -3,7 +3,7 @@ package webbanhngot.service;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Review;
-import com.webbanhngot.backendbanh.repository;.ReviewRepository;
+import webbanhngot.repository.ReviewRepository;
 
 public class ReviewService {
 

@@ -1,4 +1,4 @@
-package com.com.webbanhngot.backendbackendbanh.entity;
+package com.webbanhngot.backendbanh.entity;
 import java.time.LocalDateTime;
 
 public class Review {

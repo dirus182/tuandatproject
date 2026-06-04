@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import webbanhngot.entity.Customer;
 import webbanhngot.entity.CustomerOrder;
-import com.webbanhngot.backendbanh.repository;.CustomerRepository;
-import com.webbanhngot.backendbanh.repository;.CustomerOrderRepository;
+import webbanhngot.repository.CustomerRepository;
+import webbanhngot.repository.CustomerOrderRepository;
 
 public class CustomerService {
 

@@ -1,4 +1,4 @@
-package com.com.webbanhngot.backendbackendbanh.entity;
+package com.webbanhngot.backendbanh.entity;
 
 public class OptionCake {
 	private Integer option_cake_id;

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Product;
-import com.webbanhngot.backendbanh.repository;.ProductRepository;
+import webbanhngot.repository.ProductRepository;
 
 public class ProductService {
 

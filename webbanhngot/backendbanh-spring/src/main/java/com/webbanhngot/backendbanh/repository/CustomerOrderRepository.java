@@ -1,4 +1,4 @@
-package com.com.webbanhngot.backendbackendbanh.repository;
+package com.webbanhngot.backendbanh.repository;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import com.com.webbanhngot.backendbackendbanh.db.DBConnection;
-import com.com.webbanhngot.backendbackendbanh.entity.CustomerOrder;
+import com.webbanhngot.backendbanh.db.DBConnection;
+import com.webbanhngot.backendbanh.entity.CustomerOrder;
 
 public class CustomerOrderRepository {
 

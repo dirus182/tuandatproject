@@ -3,7 +3,7 @@ package webbanhngot.service;
 import java.util.ArrayList;
 
 import webbanhngot.entity.Payment;
-import com.webbanhngot.backendbanh.repository;.PaymentRepository;
+import webbanhngot.repository.PaymentRepository;
 
 public class PaymentService {
 

@@ -1,4 +1,4 @@
-package com.webbanhngot.backendbanh.repository;;
+package webbanhngot.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

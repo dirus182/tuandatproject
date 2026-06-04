@@ -1,1 +1,1 @@
-package com.com.webbanhngot.backendbackendbanh.entity;
+package com.webbanhngot.backendbanh.entity;

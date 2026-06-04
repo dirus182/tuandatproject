@@ -1,4 +1,4 @@
-package com.com.webbanhngot.backendbackendbanh.db;
+package com.webbanhngot.backendbanh.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
