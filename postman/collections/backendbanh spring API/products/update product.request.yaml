@@ -1,0 +1,33 @@
+$kind: http-request
+name: 'Update product'
+method: PUT
+url: '{{baseUrl}}/api/products/:id'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+pathVariables:
+  - key: id
+    value: '1'
+body:
+  type: json
+  content: |-
+    {
+      "cake_id": 1,
+      "option_cake_id": 1,
+      "quantity": 12,
+      "price": 135000.00,
+      "description": [
+        "Banh kem size nho",
+        "Cap nhat gia"
+      ],
+      "cake_name": "Banh kem chocolate",
+      "create_at": "2026-06-06T10:00:00"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is successful', function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);
+      });

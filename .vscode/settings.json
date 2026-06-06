@@ -1,4 +1,9 @@
 {
-    "java.import.maven.enabled": true,
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.project.sourcePaths": [
+        "backendbanh-spring/src/main/java"
+    ],
+    "java.project.outputPath": "backendbanh-spring/target/classes",
+    "java.project.referencedLibraries": [
+        "backendbanh-spring/lib/**/*.jar"
+    ]
 }

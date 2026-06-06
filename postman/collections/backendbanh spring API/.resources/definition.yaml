@@ -1,0 +1,10 @@
+$kind: collection
+name: 'Backend Banh Spring API'
+description: 'Local-mode Postman collection generated from the Spring Boot controllers in webbanhngot/backendbanh-spring. Base URL is provided by the Backend Banh Spring Development environment.'
+variables:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+    description: 'Spring Boot backend base URL'
+  - key: token
+    value: ''
+    description: 'Bearer token placeholder for future protected endpoints'

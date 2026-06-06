@@ -1,0 +1,12 @@
+$kind: http-request
+name: 'List products'
+method: GET
+url: '{{baseUrl}}/api/products'
+order: 1000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is successful', function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);
+      });

@@ -1,0 +1,22 @@
+$kind: http-request
+name: 'Create option'
+method: POST
+url: '{{baseUrl}}/api/options'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "option_cake_id": 1,
+      "category_name": "Banh kem"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status code is successful', function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);
+      });
