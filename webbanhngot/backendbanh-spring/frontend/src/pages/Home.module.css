@@ -1,0 +1,166 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.statusBanner,
+.statusBannerError {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.statusBanner {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-dark);
+  border: 1px solid rgba(34, 34, 34, 0.08);
+}
+
+.statusBannerError {
+  background: rgba(255, 236, 236, 0.95);
+  color: var(--danger);
+  border: 1px solid rgba(235, 87, 87, 0.22);
+}
+
+.hero {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  padding: var(--spacing-2xl) 0;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.heroContent {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  align-items: center;
+}
+
+.heroImage {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  object-fit: cover;
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.heroText h1 {
+  font-size: 3rem;
+  color: var(--primary-dark);
+}
+
+.heroText p {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  line-height: 1.8;
+}
+
+.featured,
+.allProducts {
+  padding: var(--spacing-2xl) 0;
+}
+
+.featured h2,
+.allProducts h2 {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 1.05rem;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.grid {
+  margin-bottom: var(--spacing-xl);
+}
+
+.bakerNote {
+  background-color: var(--bg-light);
+  padding: var(--spacing-2xl) 0;
+  margin: var(--spacing-2xl) 0;
+}
+
+.bakerNoteContent {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  align-items: center;
+  background-color: var(--accent-pink);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+}
+
+.bakerNoteImage {
+  position: relative;
+}
+
+.bakerNoteImage img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  object-fit: cover;
+}
+
+.bakerNoteText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.bakerNoteText h3 {
+  color: var(--accent-red);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.bakerNoteText p {
+  font-style: italic;
+  color: var(--text-dark);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.viewMore {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .heroContent,
+  .bakerNoteContent {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  .heroText h1 {
+    font-size: 2rem;
+  }
+
+  .featured,
+  .allProducts {
+    padding: var(--spacing-xl) 0;
+  }
+}
+
