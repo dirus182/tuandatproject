@@ -225,6 +225,43 @@
   color: var(--accent-red);
 }
 
+.checkoutForm {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.checkoutForm input,
+.checkoutForm textarea,
+.checkoutForm select {
+  width: 100%;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text-dark);
+  background-color: white;
+}
+
+.checkoutForm textarea {
+  resize: vertical;
+}
+
+.checkoutSuccess,
+.checkoutError {
+  margin: 0 0 var(--spacing-md);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.checkoutSuccess {
+  color: #1f7a3a;
+}
+
+.checkoutError {
+  color: var(--accent-red);
+}
+
 .bakerNote {
   background-color: var(--accent-pink);
   padding: var(--spacing-md);

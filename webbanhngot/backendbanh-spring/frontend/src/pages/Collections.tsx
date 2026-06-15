@@ -1,26 +1,53 @@
-import { useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { ProductCard } from '../components/ProductCard'
 import { PRODUCTS, CATEGORIES, FLAVOR_OPTIONS, PRICE_RANGES } from '../constants/products'
+import { addToCart, getCartCount } from '../services/cartService'
+import { getProducts } from '../services/productService'
 import type { Product } from '../types/product'
 import styles from './Collections.module.css'
 
 export function CollectionsPage() {
-  const [cart, setCart] = useState<Product[]>([])
+  const [cartCount, setCartCount] = useState(getCartCount)
+  const [products, setProducts] = useState<Product[]>(PRODUCTS)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | undefined>()
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([])
   const [selectedPriceRange, setSelectedPriceRange] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState('popularity')
 
+  useEffect(() => {
+    async function loadProducts() {
+      setLoading(true)
+      setError(undefined)
+
+      try {
+        const apiProducts = await getProducts()
+        if (apiProducts.length > 0) {
+          setProducts(apiProducts)
+        }
+      } catch (err) {
+        console.error('Failed to load backend products:', err)
+        setError('Unable to load backend products. Showing demo products instead.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProducts()
+  }, [])
+
   const handleAddToCart = (product: Product) => {
-    setCart([...cart, product])
+    addToCart(product)
+    setCartCount(getCartCount())
   }
 
   // Filtered products
   const filteredProducts = useMemo(() => {
-    let filtered = [...PRODUCTS]
+    let filtered = [...products]
 
     // Category filter
     if (selectedCategory) {
@@ -54,7 +81,7 @@ export function CollectionsPage() {
     }
 
     return filtered
-  }, [selectedCategory, selectedFlavors, selectedPriceRange, sortBy])
+  }, [products, selectedCategory, selectedFlavors, selectedPriceRange, sortBy])
 
   const toggleFlavor = (flavor: string) => {
     setSelectedFlavors((prev) =>
@@ -64,7 +91,19 @@ export function CollectionsPage() {
 
   return (
     <div className={styles.page}>
-      <Header cartCount={cart.length} />
+      <Header cartCount={cartCount} />
+
+      {loading && (
+        <div className="container" style={{ paddingTop: '16px' }}>
+          Loading products from the backend...
+        </div>
+      )}
+
+      {error && (
+        <div className="container" style={{ paddingTop: '16px' }}>
+          {error}
+        </div>
+      )}
 
       {/* Breadcrumb */}
       <div className={styles.breadcrumb}>

@@ -1,27 +1,62 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { ReviewCard } from '../components/ReviewCard'
 import { ProductCard } from '../components/ProductCard'
 import { PRODUCTS, REVIEWS } from '../constants/products'
+import { addToCart, getCartCount } from '../services/cartService'
+import { getProductById, getProducts } from '../services/productService'
 import type { Product } from '../types/product'
 import { StarFilled, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import styles from './ProductDetail.module.css'
 
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const [cart, setCart] = useState<Product[]>([])
+  const [cartCount, setCartCount] = useState(getCartCount)
   const [quantity, setQuantity] = useState(1)
+  const [product, setProduct] = useState<Product>(PRODUCTS.find((p) => p.id === id) || PRODUCTS[0])
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>(
+    PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4)
+  )
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | undefined>()
 
-  // Get product by ID from URL params
-  const product = PRODUCTS.find((p) => p.id === id) || PRODUCTS[0]
-  const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4)
+  useEffect(() => {
+    async function loadProduct() {
+      if (!id) {
+        return
+      }
+
+      setLoading(true)
+      setError(undefined)
+
+      try {
+        const [apiProduct, apiProducts] = await Promise.all([
+          getProductById(id),
+          getProducts(),
+        ])
+        const nextProduct = apiProduct || PRODUCTS.find((p) => p.id === id) || PRODUCTS[0]
+        const nextRelatedProducts = (apiProducts.length > 0 ? apiProducts : PRODUCTS)
+          .filter((p) => p.id !== nextProduct.id)
+          .slice(0, 4)
+
+        setProduct(nextProduct)
+        setRelatedProducts(nextRelatedProducts)
+      } catch (err) {
+        console.error('Failed to load backend product:', err)
+        setError('Unable to load backend product. Showing demo product instead.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProduct()
+  }, [id])
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      setCart([...cart, product])
-    }
+    addToCart(product, quantity)
+    setCartCount(getCartCount())
     setQuantity(1)
   }
 
@@ -32,7 +67,19 @@ export function ProductDetailPage() {
 
   return (
     <div className={styles.page}>
-      <Header cartCount={cart.length} />
+      <Header cartCount={cartCount} />
+
+      {loading && (
+        <div className="container" style={{ paddingTop: '16px' }}>
+          Loading product from the backend...
+        </div>
+      )}
+
+      {error && (
+        <div className="container" style={{ paddingTop: '16px' }}>
+          {error}
+        </div>
+      )}
 
       {/* Breadcrumb */}
       <div className={styles.breadcrumb}>
@@ -192,7 +239,14 @@ export function ProductDetailPage() {
           <p className={styles.subtitle}>Curated pairings for your sweet tooth</p>
           <div className={`${styles.grid} grid grid-cols-4`}>
             {relatedProducts.map((prod) => (
-              <ProductCard key={prod.id} product={prod} onAddToCart={() => handleAddToCart()} />
+              <ProductCard
+                key={prod.id}
+                product={prod}
+                onAddToCart={(relatedProduct) => {
+                  addToCart(relatedProduct)
+                  setCartCount(getCartCount())
+                }}
+              />
             ))}
           </div>
           <div className={styles.viewMore}>

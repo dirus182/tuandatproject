@@ -5,11 +5,12 @@ import { Footer } from '../components/Footer'
 import { ProductCard } from '../components/ProductCard'
 import { PRODUCTS, BAKER_NOTE, BAKER_NOTE_CONTENT } from '../constants/products'
 import { getProducts } from '../services/productService'
+import { addToCart, getCartCount } from '../services/cartService'
 import type { Product } from '../types/product'
 import styles from './Home.module.css'
 
 export function HomePage() {
-  const [cart, setCart] = useState<Product[]>([])
+  const [cartCount, setCartCount] = useState(getCartCount)
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
@@ -36,14 +37,15 @@ export function HomePage() {
   }, [])
 
   const handleAddToCart = (product: Product) => {
-    setCart([...cart, product])
+    addToCart(product)
+    setCartCount(getCartCount())
   }
 
   const featuredProducts = products.slice(0, 4)
 
   return (
     <div className={styles.page}>
-      <Header cartCount={cart.length} />
+      <Header cartCount={cartCount} />
 
       {loading && (
         <div className={styles.statusBanner}>
@@ -119,7 +121,7 @@ export function HomePage() {
           <h2>You Might Also Like</h2>
           <p className={styles.subtitle}>Curated pairing for your sweet tooth</p>
           <div className={`${styles.grid} grid grid-cols-4`}>
-            {PRODUCTS.slice(2, 6).map((product) => (
+            {products.slice(2, 6).map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
