@@ -3,6 +3,7 @@ export interface Product {
   name: string
   category: 'Cakes' | 'Pastries' | 'Cookies' | 'Bread'
   price: number
+  stockQuantity?: number
   originalPrice?: number
   image: string
   images?: string[]

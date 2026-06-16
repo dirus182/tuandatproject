@@ -16,6 +16,8 @@ export function ProductCard({
   onFavorite,
   isFavorite = false,
 }: ProductCardProps) {
+  const isOutOfStock = product.stockQuantity !== undefined && product.stockQuantity <= 0
+
   return (
     <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className={styles.card}>
@@ -25,17 +27,22 @@ export function ProductCard({
 
         {/* Badge */}
         {product.badge && <div className={styles.badge}>{product.badge}</div>}
+        {isOutOfStock && <div className={styles.stockBadge}>Out of stock</div>}
 
         {/* Overlay Actions */}
         <div className={styles.overlay}>
           <button
             className={styles.actionBtn}
+            disabled={isOutOfStock}
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
+              if (isOutOfStock) {
+                return
+              }
               onAddToCart?.(product)
             }}
-            title="Add to cart"
+            title={isOutOfStock ? 'Out of stock' : 'Add to cart'}
           >
             <ShoppingCartOutlined />
           </button>
@@ -57,6 +64,11 @@ export function ProductCard({
       <div className={styles.info}>
         <p className={styles.category}>{product.category}</p>
         <h3 className={styles.name}>{product.name}</h3>
+        {product.stockQuantity !== undefined && (
+          <p className={isOutOfStock ? styles.outOfStockText : styles.stockText}>
+            {isOutOfStock ? 'Out of stock' : `${product.stockQuantity} available`}
+          </p>
+        )}
 
         {/* Rating */}
         {product.rating && (

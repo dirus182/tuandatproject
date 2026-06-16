@@ -57,6 +57,7 @@ function mapBackendProduct(raw: BackendProduct): Product {
     name: raw.cake_name ?? `Product ${raw.cake_id}`,
     category: getProductCategory(raw),
     price: Number(raw.price ?? 0),
+    stockQuantity: raw.quantity ?? 0,
     image: getProductImage(raw),
     description: raw.description?.join(' ') ?? 'Delicious artisan cake.',
     ingredients: [],

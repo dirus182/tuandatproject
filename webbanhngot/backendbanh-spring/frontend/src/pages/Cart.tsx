@@ -49,6 +49,23 @@ export function CartPage() {
   }
 
   const handleCheckout = async () => {
+    const hasMissingCustomerInfo = Object.values(customer).some((value) => !value.trim())
+    const outOfStockItem = cartItems.find(
+      (item) => item.product.stockQuantity !== undefined && item.product.stockQuantity <= 0
+    )
+
+    if (hasMissingCustomerInfo) {
+      setCheckoutStatus(undefined)
+      setCheckoutError('Please fill in all customer information before checkout.')
+      return
+    }
+
+    if (outOfStockItem) {
+      setCheckoutStatus(undefined)
+      setCheckoutError(`${outOfStockItem.product.name} is out of stock. Please remove it from your cart.`)
+      return
+    }
+
     setSubmitting(true)
     setCheckoutError(undefined)
     setCheckoutStatus(undefined)

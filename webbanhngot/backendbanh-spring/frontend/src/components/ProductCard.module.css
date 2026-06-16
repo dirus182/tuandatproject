@@ -51,6 +51,20 @@
   z-index: 2;
 }
 
+.stockBadge {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  background-color: rgba(25, 25, 25, 0.85);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
 .overlay {
   position: absolute;
   top: 0;
@@ -93,6 +107,17 @@
   transform: scale(1.1);
 }
 
+.actionBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.actionBtn:disabled:hover {
+  background-color: var(--bg-white);
+  color: var(--text-dark);
+  transform: none;
+}
+
 .actionBtn.favorited {
   color: var(--accent-red);
 }
@@ -121,6 +146,21 @@
   line-height: 1.4;
   min-height: 2.8em;
   word-break: break-word;
+}
+
+.stockText,
+.outOfStockText {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.stockText {
+  color: var(--text-light);
+}
+
+.outOfStockText {
+  color: var(--accent-red);
+  font-weight: 700;
 }
 
 .rating {

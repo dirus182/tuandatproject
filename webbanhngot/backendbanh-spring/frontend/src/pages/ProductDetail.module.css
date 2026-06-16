@@ -144,6 +144,12 @@
   margin: var(--spacing-md) 0;
 }
 
+.stockStatus {
+  color: var(--accent-red);
+  font-weight: 700;
+  margin: 0 0 var(--spacing-lg);
+}
+
 .ingredients {
   margin: var(--spacing-xl) 0;
 }

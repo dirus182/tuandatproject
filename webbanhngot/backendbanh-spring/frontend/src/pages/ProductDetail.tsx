@@ -21,6 +21,7 @@ export function ProductDetailPage() {
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
+  const isOutOfStock = product.stockQuantity !== undefined && product.stockQuantity <= 0
 
   useEffect(() => {
     async function loadProduct() {
@@ -55,6 +56,10 @@ export function ProductDetailPage() {
   }, [id])
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      return
+    }
+
     addToCart(product, quantity)
     setCartCount(getCartCount())
     setQuantity(1)
@@ -137,6 +142,11 @@ export function ProductDetailPage() {
 
               {/* Description */}
               <p className={styles.description}>{product.description}</p>
+              {product.stockQuantity !== undefined && (
+                <p className={styles.stockStatus}>
+                  {isOutOfStock ? 'Out of stock' : `${product.stockQuantity} available`}
+                </p>
+              )}
 
               {/* Key Ingredients */}
               {product.ingredients && (
@@ -163,8 +173,8 @@ export function ProductDetailPage() {
                     <PlusOutlined />
                   </button>
                 </div>
-                <button className="btn-primary" onClick={handleAddToCart}>
-                  ADD TO CART
+                <button className="btn-primary" onClick={handleAddToCart} disabled={isOutOfStock}>
+                  {isOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
                 </button>
               </div>
 
