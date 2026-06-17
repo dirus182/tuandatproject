@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
@@ -14,6 +14,7 @@ import type { CartItem } from '../types/product'
 import styles from './Cart.module.css'
 
 export function CartPage() {
+  const navigate = useNavigate()
   const [cartItems, setCartItems] = useState<CartItem[]>(getCartItems)
   const [customer, setCustomer] = useState<CheckoutCustomer>({
     firstName: '',
@@ -75,9 +76,19 @@ export function CartPage() {
       const response = await createCheckout(payload)
       setCartItems(clearCart())
       setCheckoutStatus(`Order #${response.orderId} created successfully.`)
+      navigate('/checkout/success', {
+        state: {
+          orderId: response.orderId,
+          totalPrice: response.totalPrice,
+          paymentMethod: response.paymentMethod,
+          customer,
+        },
+      })
     } catch (err) {
       console.error('Checkout failed:', err)
-      setCheckoutError('Checkout failed. Please check your information and try again.')
+      const errorMessage =
+        err instanceof Error ? err.message : 'Checkout failed. Please check your information and try again.'
+      setCheckoutError(errorMessage)
     } finally {
       setSubmitting(false)
     }

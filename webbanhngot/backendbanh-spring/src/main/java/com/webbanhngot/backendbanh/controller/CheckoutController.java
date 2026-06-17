@@ -23,7 +23,11 @@ public class CheckoutController {
 
     @PostMapping
     public CheckoutResponse createCheckout(@RequestBody CheckoutRequest request) {
-        validateRequest(request);
+        try {
+            validateRequest(request);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        }
 
         try (Connection connection = DBConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -112,11 +116,12 @@ public class CheckoutController {
     }
 
     private void updatePaymentMethod(Connection connection, Integer orderId, String paymentMethod) throws SQLException {
-        String sql = "UPDATE payment SET payment_method = ? WHERE order_id = ?";
+        String sql = "INSERT INTO payment (order_id, payment_method) VALUES (?, ?) "
+                + "ON CONFLICT (order_id) DO UPDATE SET payment_method = EXCLUDED.payment_method";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, normalizePaymentMethod(paymentMethod));
-            statement.setInt(2, orderId);
+            statement.setInt(1, orderId);
+            statement.setString(2, normalizePaymentMethod(paymentMethod));
             statement.executeUpdate();
         }
     }

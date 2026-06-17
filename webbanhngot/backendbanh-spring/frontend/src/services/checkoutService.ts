@@ -58,7 +58,29 @@ export async function createCheckout(payload: CheckoutPayload): Promise<Checkout
   })
 
   if (!response.ok) {
-    throw new Error(`Checkout failed with status ${response.status}`)
+    const fallbackMessage = `Checkout failed with status ${response.status}`
+
+    try {
+      const text = await response.text()
+      if (!text) {
+        throw new Error(fallbackMessage)
+      }
+
+      let message = text
+      try {
+        const data = JSON.parse(text) as { message?: string; error?: string }
+        message = data.message || data.error || fallbackMessage
+      } catch {
+        message = text
+      }
+
+      throw new Error(message)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error
+      }
+      throw new Error(fallbackMessage)
+    }
   }
 
   return response.json() as Promise<CheckoutResponse>

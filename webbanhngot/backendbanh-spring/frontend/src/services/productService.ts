@@ -32,6 +32,19 @@ export type BackendProduct = {
   cake_name?: string
   create_at?: string
 }
+
+type BackendOrderDetail = {
+  order_detail_id?: number
+  cake_id?: number
+}
+
+type BackendReview = {
+  reviews_id?: number
+  order_detail_id?: number
+  cake_id?: number
+  rating?: number | string
+}
+
 function getProductImage(raw: BackendProduct): string {
   const productName = raw.cake_name?.trim().toLowerCase()
   return productName ? PRODUCT_IMAGES[productName] ?? DEFAULT_IMAGE : DEFAULT_IMAGE
@@ -67,29 +80,67 @@ function mapBackendProduct(raw: BackendProduct): Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/api/products`)
+  const [productsResponse, orderDetailsResponse, reviewsResponse] = await Promise.all([
+    fetch(`${API_BASE_URL}/api/products`),
+    fetch(`${API_BASE_URL}/api/order-details`),
+    fetch(`${API_BASE_URL}/api/reviews`),
+  ])
 
-  if (!response.ok) {
-    throw new Error(`Backend request failed with status ${response.status}`)
+  if (!productsResponse.ok) {
+    throw new Error(`Backend request failed with status ${productsResponse.status}`)
   }
 
-  const data = (await response.json()) as BackendProduct[]
+  const data = (await productsResponse.json()) as BackendProduct[]
+  const orderDetails = orderDetailsResponse.ok
+    ? ((await orderDetailsResponse.json()) as BackendOrderDetail[])
+    : []
+  const reviews = reviewsResponse.ok ? ((await reviewsResponse.json()) as BackendReview[]) : []
 
-  return data.map(mapBackendProduct)
+  const orderDetailToCake = new Map<number, number>()
+  for (const orderDetail of orderDetails) {
+    if (orderDetail.order_detail_id !== undefined && orderDetail.cake_id !== undefined) {
+      orderDetailToCake.set(Number(orderDetail.order_detail_id), Number(orderDetail.cake_id))
+    }
+  }
+
+  const reviewStats = new Map<number, { sum: number; count: number }>()
+  for (const review of reviews) {
+    const cakeId =
+      review.cake_id !== undefined
+        ? Number(review.cake_id)
+        : review.order_detail_id !== undefined
+          ? orderDetailToCake.get(Number(review.order_detail_id))
+          : undefined
+
+    if (cakeId === undefined) {
+      continue
+    }
+
+    const rating = Number(review.rating ?? 0)
+    if (!Number.isFinite(rating) || rating <= 0) {
+      continue
+    }
+
+    const stats = reviewStats.get(cakeId) ?? { sum: 0, count: 0 }
+    stats.sum += rating
+    stats.count += 1
+    reviewStats.set(cakeId, stats)
+  }
+
+  return data.map((rawProduct) => {
+    const product = mapBackendProduct(rawProduct)
+    const stats = reviewStats.get(rawProduct.cake_id)
+
+    if (stats && stats.count > 0) {
+      product.rating = Math.round((stats.sum / stats.count) * 10) / 10
+      product.reviewCount = stats.count
+    }
+
+    return product
+  })
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
-  const response = await fetch(`${API_BASE_URL}/api/products/${id}`)
-
-  if (response.status === 404) {
-    return undefined
-  }
-
-  if (!response.ok) {
-    throw new Error(`Backend request failed with status ${response.status}`)
-  }
-
-  const data = (await response.json()) as BackendProduct | null
-
-  return data ? mapBackendProduct(data) : undefined
+  const products = await getProducts()
+  return products.find((product) => product.id === id)
 }
