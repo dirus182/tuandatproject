@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { ProductCard } from '../components/ProductCard'
-import { PRODUCTS, CATEGORIES, FLAVOR_OPTIONS, PRICE_RANGES } from '../constants/products'
+import { PRODUCTS, PRICE_RANGES } from '../constants/products'
 import { addToCart, getCartCount } from '../services/cartService'
 import { getProducts } from '../services/productService'
 import type { Product } from '../types/product'
@@ -44,6 +44,36 @@ export function CollectionsPage() {
     addToCart(product)
     setCartCount(getCartCount())
   }
+
+  const categoryOptions = useMemo(() => {
+    const categoryOrder: Product['category'][] = ['Cakes', 'Pastries', 'Cookies', 'Bread']
+    const counts = products.reduce<Record<string, number>>((currentCounts, product) => {
+      currentCounts[product.category] = (currentCounts[product.category] ?? 0) + 1
+      return currentCounts
+    }, {})
+
+    return categoryOrder
+      .filter((category) => counts[category] > 0)
+      .map((category) => ({
+        label: category,
+        value: category,
+        count: counts[category],
+      }))
+  }, [products])
+
+  const flavorOptions = useMemo(() => {
+    const counts = products.reduce<Record<string, number>>((currentCounts, product) => {
+      product.flavor?.forEach((flavor) => {
+        currentCounts[flavor] = (currentCounts[flavor] ?? 0) + 1
+      })
+
+      return currentCounts
+    }, {})
+
+    return Object.entries(counts)
+      .sort(([flavorA], [flavorB]) => flavorA.localeCompare(flavorB))
+      .map(([flavor, count]) => ({ flavor, count }))
+  }, [products])
 
   // Filtered products
   const filteredProducts = useMemo(() => {
@@ -89,6 +119,12 @@ export function CollectionsPage() {
     )
   }
 
+  const clearFilters = () => {
+    setSelectedCategory(null)
+    setSelectedFlavors([])
+    setSelectedPriceRange(null)
+  }
+
   return (
     <div className={styles.page}>
       <Header cartCount={cartCount} />
@@ -122,9 +158,9 @@ export function CollectionsPage() {
               className={`${styles.filterBtn} ${!selectedCategory ? styles.active : ''}`}
               onClick={() => setSelectedCategory(null)}
             >
-              All Products
+              All Products ({products.length})
             </button>
-            {CATEGORIES.map((cat) => (
+            {categoryOptions.map((cat) => (
               <button
                 key={cat.value}
                 className={`${styles.filterBtn} ${selectedCategory === cat.value ? styles.active : ''}`}
@@ -137,14 +173,14 @@ export function CollectionsPage() {
 
           <h3>Flavor</h3>
           <div className={styles.filterGroup}>
-            {FLAVOR_OPTIONS.map((flavor) => (
+            {flavorOptions.map(({ flavor, count }) => (
               <label key={flavor} className={styles.checkbox}>
                 <input
                   type="checkbox"
                   checked={selectedFlavors.includes(flavor)}
                   onChange={() => toggleFlavor(flavor)}
                 />
-                <span>{flavor}</span>
+                <span>{flavor} ({count})</span>
               </label>
             ))}
           </div>
@@ -164,7 +200,7 @@ export function CollectionsPage() {
             ))}
             <button
               className={styles.clearBtn}
-              onClick={() => setSelectedCategory(null)}
+              onClick={clearFilters}
             >
               Clear Filters
             </button>

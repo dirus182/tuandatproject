@@ -36,6 +36,7 @@ public class CheckoutController {
                 Integer customerId = createCustomer(connection, request.customer);
                 Integer orderId = createOrder(connection, customerId, request.totalPrice);
                 List<Integer> orderDetailIds = createOrderDetails(connection, orderId, request.items);
+                updateOrderTotal(connection, orderId, request.totalPrice);
                 updatePaymentMethod(connection, orderId, request.paymentMethod);
 
                 connection.commit();
@@ -113,6 +114,16 @@ public class CheckoutController {
         }
 
         return orderDetailIds;
+    }
+
+    private void updateOrderTotal(Connection connection, Integer orderId, BigDecimal totalPrice) throws SQLException {
+        String sql = "UPDATE customerorder SET total_price = ? WHERE order_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setBigDecimal(1, totalPrice);
+            statement.setInt(2, orderId);
+            statement.executeUpdate();
+        }
     }
 
     private void updatePaymentMethod(Connection connection, Integer orderId, String paymentMethod) throws SQLException {

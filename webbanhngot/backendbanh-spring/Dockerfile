@@ -1,13 +1,21 @@
-# Use Eclipse Temurin Java 17 JRE (runtime only)
+FROM maven:3.9-eclipse-temurin-17 AS build
+
+WORKDIR /workspace
+
+COPY pom.xml .
+RUN mvn -B -DskipTests dependency:go-offline
+
+COPY src ./src
+RUN mvn -B -DskipTests package
+
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy pre-built jar from Maven build
-COPY target/backendbanh-0.0.1-SNAPSHOT.jar app.jar
+RUN apk add --no-cache curl
 
-# Expose port
+COPY --from=build /workspace/target/backendbanh-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# Run application
 ENTRYPOINT ["java", "-jar", "app.jar"]

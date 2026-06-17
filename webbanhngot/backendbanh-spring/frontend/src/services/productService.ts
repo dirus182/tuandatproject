@@ -1,7 +1,7 @@
 import type { Product } from '../types/product'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&h=600&fit=crop&auto=format'
+const DEFAULT_IMAGE = '/products/defaultbakery.jpg'
 
 const PRODUCT_IMAGES: Record<string, string> = {
   'chocolate cake': '/products/Chocolate Cake.jpg',
@@ -23,6 +23,28 @@ const PRODUCT_IMAGES: Record<string, string> = {
   'pepper bread': '/products/Pepper Bread.jpg',
   'parmesan stick': '/products/Parmesan Stick.jpg',
 }
+
+const FLAVOR_KEYWORDS = [
+  'Chocolate',
+  'Vanilla',
+  'Strawberry',
+  'Caramel',
+  'Almond',
+  'Blueberry',
+  'Coconut',
+  'Honey',
+  'Tiramisu',
+  'Cheese',
+  'Garlic',
+  'Sausage',
+  'Ham',
+  'Herb',
+  'Cheddar',
+  'Tomato',
+  'Pepper',
+  'Parmesan',
+]
+
 export type BackendProduct = {
   cake_id: number
   option_cake_id?: number
@@ -64,6 +86,15 @@ function getProductCategory(raw: BackendProduct): Product['category'] {
   return 'Cakes'
 }
 
+function getProductFlavors(raw: BackendProduct): string[] {
+  const searchableText = [
+    raw.cake_name ?? '',
+    ...(raw.description ?? []),
+  ].join(' ').toLowerCase()
+
+  return FLAVOR_KEYWORDS.filter((flavor) => searchableText.includes(flavor.toLowerCase()))
+}
+
 function mapBackendProduct(raw: BackendProduct): Product {
   return {
     id: String(raw.cake_id),
@@ -74,6 +105,7 @@ function mapBackendProduct(raw: BackendProduct): Product {
     image: getProductImage(raw),
     description: raw.description?.join(' ') ?? 'Delicious artisan cake.',
     ingredients: [],
+    flavor: getProductFlavors(raw),
     reviewCount: 0,
     rating: 0,
   }

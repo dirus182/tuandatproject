@@ -100,7 +100,7 @@ export function HomePage() {
           <div className={styles.bakerNoteContent}>
             <div className={styles.bakerNoteImage}>
               <img
-                src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=400&fit=crop"
+                src="/products/defaultbakery.jpg"
                 alt="Baker"
               />
             </div>
