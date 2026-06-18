@@ -1,14 +1,29 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Header, Footer } from '../components'
+import { logoutAdmin } from '../services/adminAuthService'
 import styles from './Admin.module.css'
 
 export function AdminPage() {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logoutAdmin()
+    navigate('/admin/login', { replace: true })
+  }
+
   return (
     <div className={styles.page}>
       <Header />
       <main className={styles.container}>
-        <h1>Admin Dashboard</h1>
-        <p>Quick access to administration modules.</p>
+        <div className={styles.heading}>
+          <div>
+            <h1>Admin Dashboard</h1>
+            <p>Quick access to administration modules.</p>
+          </div>
+          <button className={styles.logoutButton} type="button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
         <div className={styles.grid}>
           <Link className={styles.card} to="/admin/products">Products</Link>
           <Link className={styles.card} to="/admin/orders">Orders</Link>

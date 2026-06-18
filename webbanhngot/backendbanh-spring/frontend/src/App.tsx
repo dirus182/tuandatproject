@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AdminRoute } from './components'
 import { HomePage } from './pages/Home'
 import { CollectionsPage } from './pages/Collections'
 import { ProductDetailPage } from './pages/ProductDetail'
 import { CartPage } from './pages/Cart'
 import { CheckoutSuccessPage } from './pages/CheckoutSuccess'
+import { AdminLoginPage } from './pages/AdminLogin'
 import { AdminPage } from './pages/Admin'
 import { ProductsPage } from './pages/Products'
 import { CustomersPage } from './pages/Customers'
@@ -30,14 +32,15 @@ function App() {
         <Route path="/our-story" element={<OurStoryPage />} />
         <Route path="/wholesale" element={<WholesalePage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/products" element={<ProductsPage />} />
-        <Route path="/admin/customers" element={<CustomersPage />} />
-        <Route path="/admin/orders" element={<OrdersPage />} />
-        <Route path="/admin/options" element={<OptionsPage />} />
-        <Route path="/admin/payments" element={<PaymentsPage />} />
-        <Route path="/admin/order-details" element={<OrderDetailsPage />} />
-        <Route path="/admin/reviews" element={<ReviewsPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><ProductsPage /></AdminRoute>} />
+        <Route path="/admin/customers" element={<AdminRoute><CustomersPage /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><OrdersPage /></AdminRoute>} />
+        <Route path="/admin/options" element={<AdminRoute><OptionsPage /></AdminRoute>} />
+        <Route path="/admin/payments" element={<AdminRoute><PaymentsPage /></AdminRoute>} />
+        <Route path="/admin/order-details" element={<AdminRoute><OrderDetailsPage /></AdminRoute>} />
+        <Route path="/admin/reviews" element={<AdminRoute><ReviewsPage /></AdminRoute>} />
       </Routes>
     </Router>
   )

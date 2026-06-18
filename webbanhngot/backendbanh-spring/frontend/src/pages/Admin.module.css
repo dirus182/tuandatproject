@@ -8,6 +8,31 @@
   margin: 32px auto;
   padding: 0 16px;
 }
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.heading h1 {
+  margin: 0 0 8px;
+}
+.heading p {
+  margin: 0;
+}
+.logoutButton {
+  border: 1px solid #b9826b;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: #fff;
+  color: #7a3f2a;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.logoutButton:hover {
+  background: #f7eee8;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -29,3 +54,8 @@
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
+@media (max-width: 640px) {
+  .heading {
+    flex-direction: column;
+  }
+}
