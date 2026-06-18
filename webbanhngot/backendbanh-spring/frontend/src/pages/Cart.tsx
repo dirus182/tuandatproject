@@ -7,6 +7,7 @@ import { clearCart, getCartItems, removeCartItem, updateCartItem } from '../serv
 import {
   buildCheckoutPayload,
   createCheckout,
+  saveReviewAccesses,
   type CheckoutCustomer,
   type CheckoutPayload,
 } from '../services/checkoutService'
@@ -74,6 +75,7 @@ export function CartPage() {
     try {
       const payload = buildCheckoutPayload(customer, cartItems, total, paymentMethod)
       const response = await createCheckout(payload)
+      saveReviewAccesses(response, cartItems, customer)
       setCartItems(clearCart())
       setCheckoutStatus(`Order #${response.orderId} created successfully.`)
       navigate('/checkout/success', {

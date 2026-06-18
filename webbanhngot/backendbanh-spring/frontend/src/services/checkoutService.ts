@@ -30,6 +30,15 @@ export type CheckoutResponse = {
   message: string
 }
 
+export type ReviewAccess = {
+  cakeId: number
+  orderDetailId: number
+  customerName: string
+  orderId: number
+}
+
+const REVIEW_ACCESS_KEY = 'bakeryReviewAccess'
+
 export function buildCheckoutPayload(
   customer: CheckoutCustomer,
   cartItems: CartItem[],
@@ -84,4 +93,51 @@ export async function createCheckout(payload: CheckoutPayload): Promise<Checkout
   }
 
   return response.json() as Promise<CheckoutResponse>
+}
+
+export function saveReviewAccesses(
+  response: CheckoutResponse,
+  cartItems: CartItem[],
+  customer: CheckoutCustomer
+): void {
+  const existingAccesses = getReviewAccesses()
+  const customerName = `${customer.firstName} ${customer.lastName}`.trim()
+  const nextAccesses = cartItems
+    .map((item, index) => {
+      const orderDetailId = response.orderDetailIds[index]
+
+      if (orderDetailId === undefined) {
+        return undefined
+      }
+
+      return {
+        cakeId: Number(item.product.id),
+        orderDetailId,
+        customerName,
+        orderId: response.orderId,
+      } satisfies ReviewAccess
+    })
+    .filter((item): item is ReviewAccess => item !== undefined)
+
+  localStorage.setItem(
+    REVIEW_ACCESS_KEY,
+    JSON.stringify([...existingAccesses, ...nextAccesses])
+  )
+}
+
+export function getReviewAccessForProduct(productId: string): ReviewAccess | undefined {
+  const cakeId = Number(productId)
+
+  return getReviewAccesses()
+    .filter((access) => Number(access.cakeId) === cakeId)
+    .slice(-1)[0]
+}
+
+function getReviewAccesses(): ReviewAccess[] {
+  try {
+    const raw = localStorage.getItem(REVIEW_ACCESS_KEY)
+    return raw ? JSON.parse(raw) as ReviewAccess[] : []
+  } catch {
+    return []
+  }
 }

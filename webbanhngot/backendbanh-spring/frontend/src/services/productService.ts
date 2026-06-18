@@ -176,3 +176,113 @@ export async function getProductById(id: string): Promise<Product | undefined> {
   const products = await getProducts()
   return products.find((product) => product.id === id)
 }
+
+export async function searchProducts(query: string): Promise<Product[]> {
+  const normalizedQuery = query.trim().toLowerCase()
+
+  if (!normalizedQuery) {
+    return []
+  }
+
+  const products = await getProducts()
+  return products.filter((product) =>
+    product.name.toLowerCase().includes(normalizedQuery) ||
+    product.category.toLowerCase().includes(normalizedQuery) ||
+    product.description?.toLowerCase().includes(normalizedQuery)
+  )
+}
+
+export async function getSuggestions(limit = 4): Promise<Product[]> {
+  const products = await getProducts()
+  return products.slice(0, limit)
+}
+
+export async function getBackendProducts(): Promise<BackendProduct[]> {
+  const response = await fetch(`${API_BASE_URL}/api/products`)
+  await ensureOk(response)
+  return (await response.json()) as BackendProduct[]
+}
+
+export async function getBackendProductById(id: number): Promise<BackendProduct | undefined> {
+  const response = await fetch(`${API_BASE_URL}/api/products/${id}`)
+
+  if (response.status === 404) {
+    return undefined
+  }
+
+  await ensureOk(response)
+  return (await response.json()) as BackendProduct
+}
+
+export async function createProduct(payload: Partial<BackendProduct>): Promise<boolean> {
+  const products = await getBackendProducts()
+  const nextCakeId = getNextId(products, 'cake_id')
+  const response = await fetch(`${API_BASE_URL}/api/products`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(normalizeProductPayload(payload, nextCakeId)),
+  })
+
+  await ensureOk(response)
+  return ensureBooleanResult(response, 'Product could not be created')
+}
+
+export async function updateProduct(id: number, payload: Partial<BackendProduct>): Promise<boolean> {
+  const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(normalizeProductPayload(payload, id)),
+  })
+
+  await ensureOk(response)
+  return ensureBooleanResult(response, 'Product could not be updated')
+}
+
+export async function deleteProduct(id: number): Promise<boolean> {
+  const response = await fetch(`${API_BASE_URL}/api/products/${id}`, { method: 'DELETE' })
+  await ensureOk(response)
+  return ensureBooleanResult(response, 'Product could not be deleted')
+}
+
+function normalizeProductPayload(payload: Partial<BackendProduct>, cakeId: number): BackendProduct {
+  const description =
+    typeof payload.description === 'string'
+      ? [payload.description]
+      : payload.description ?? []
+
+  return {
+    cake_id: cakeId,
+    option_cake_id: payload.option_cake_id ?? 1,
+    quantity: payload.quantity ?? 0,
+    price: Number(payload.price ?? 0),
+    description,
+    cake_name: payload.cake_name ?? '',
+    create_at: payload.create_at,
+  }
+}
+
+function getNextId<T extends Record<string, unknown>>(items: T[], key: keyof T): number {
+  const maxId = items.reduce((currentMax, item) => {
+    const value = Number(item[key] ?? 0)
+    return Number.isFinite(value) && value > currentMax ? value : currentMax
+  }, 0)
+
+  return maxId + 1
+}
+
+async function ensureOk(response: Response): Promise<void> {
+  if (!response.ok) {
+    const message = await response.text()
+    throw new Error(message || `Request failed: ${response.status}`)
+  }
+}
+
+async function ensureBooleanResult(response: Response, fallbackMessage: string): Promise<boolean> {
+  const result = (await response.json()) as boolean
+
+  if (!result) {
+    throw new Error(fallbackMessage)
+  }
+
+  return result
+}

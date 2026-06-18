@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShoppingCartOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons'
+import { DashboardOutlined, ShoppingCartOutlined, UserOutlined, SearchOutlined } from '@ant-design/icons'
 import { NAV_LINKS } from '../constants/products'
 import styles from './Header.module.css'
 
@@ -17,6 +17,9 @@ export function Header({ cartCount = 0 }: HeaderProps) {
     const linkLower = link.toLowerCase()
     if (linkLower === 'shop') navigate('/collections')
     else if (linkLower === 'collections') navigate('/collections')
+    else if (linkLower === 'our story') navigate('/our-story')
+    else if (linkLower === 'wholesale') navigate('/wholesale')
+    else if (linkLower === 'contact') navigate('/contact')
   }
 
   return (
@@ -51,7 +54,15 @@ export function Header({ cartCount = 0 }: HeaderProps) {
 
         {/* Right Actions */}
         <div className={styles.actions}>
-          <button className={styles.iconBtn} aria-label="Search">
+          <button
+            className={styles.iconBtn}
+            aria-label="Admin"
+            title="Admin dashboard"
+            onClick={() => navigate('/admin')}
+          >
+            <DashboardOutlined />
+          </button>
+          <button className={styles.iconBtn} aria-label="Search" onClick={() => navigate('/search')}>
             <SearchOutlined />
           </button>
           <button

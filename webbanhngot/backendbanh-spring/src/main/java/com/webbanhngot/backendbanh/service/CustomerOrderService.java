@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.webbanhngot.backendbanh.entity.CustomerOrder;
+import com.webbanhngot.backendbanh.entity.Payment;
 import com.webbanhngot.backendbanh.repository.CustomerOrderRepository;
 import com.webbanhngot.backendbanh.repository.OrderDetailRepository;
 import com.webbanhngot.backendbanh.repository.PaymentRepository;
@@ -55,6 +56,14 @@ public class CustomerOrderService {
 
         if (existingOrder == null) {
             return false;
+        }
+
+        if (isShippingStatus(newCustomerOrder.getStatus())) {
+            Payment payment = paymentRepository.getPaymentByOrderID(order_id);
+
+            if (payment == null || !"completed".equalsIgnoreCase(payment.getPayment_status())) {
+                return false;
+            }
         }
 
         return customerOrderRepository.updateCustomerOrder(order_id, newCustomerOrder);
@@ -133,6 +142,11 @@ public class CustomerOrderService {
     private boolean isValidStatus(String status) {
         return status.equals("pending")
                 || status.equals("shipped")
+                || status.equals("delivered")
                 || status.equals("canceled");
+    }
+
+    private boolean isShippingStatus(String status) {
+        return "shipped".equals(status) || "delivered".equals(status);
     }
 }

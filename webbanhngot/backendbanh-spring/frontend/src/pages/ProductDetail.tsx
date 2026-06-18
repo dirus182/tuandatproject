@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { ReviewCard } from '../components/ReviewCard'
 import { ProductCard } from '../components/ProductCard'
-import { PRODUCTS, REVIEWS } from '../constants/products'
+import { PRODUCTS } from '../constants/products'
 import { addToCart, getCartCount } from '../services/cartService'
+import {
+  createProductReview,
+  getProductReviews,
+  validateProductReviewTarget,
+  type ProductReviewTarget,
+} from '../services/productReviewService'
 import { getProductById, getProducts } from '../services/productService'
-import type { Product } from '../types/product'
+import type { Product, Review } from '../types/product'
 import { StarFilled, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import styles from './ProductDetail.module.css'
 
@@ -21,7 +27,31 @@ export function ProductDetailPage() {
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | undefined>()
+  const [productReviews, setProductReviews] = useState<Review[]>([])
+  const [reviewTarget, setReviewTarget] = useState<ProductReviewTarget | undefined>()
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviewOrderId, setReviewOrderId] = useState('')
+  const [reviewOrderDetailId, setReviewOrderDetailId] = useState('')
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewError, setReviewError] = useState<string | undefined>()
+  const [reviewMessage, setReviewMessage] = useState<string | undefined>()
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
   const isOutOfStock = product.stockQuantity !== undefined && product.stockQuantity <= 0
+  const displayedRating = productReviews.length > 0
+    ? productReviews.reduce((sum, review) => sum + review.rating, 0) / productReviews.length
+    : product.rating || 0
+  const displayedReviewCount = productReviews.length > 0
+    ? productReviews.length
+    : product.reviewCount || 0
+  const ratingDistribution = useMemo(() => {
+    return [5, 4, 3, 2, 1].map((star) => {
+      const count = productReviews.filter((review) => review.rating === star).length
+      const percent = productReviews.length > 0 ? Math.round((count / productReviews.length) * 100) : 0
+
+      return { star, count, percent }
+    })
+  }, [productReviews])
 
   useEffect(() => {
     async function loadProduct() {
@@ -41,9 +71,12 @@ export function ProductDetailPage() {
         const nextRelatedProducts = (apiProducts.length > 0 ? apiProducts : PRODUCTS)
           .filter((p) => p.id !== nextProduct.id)
           .slice(0, 4)
+        const nextProductReviews = await getProductReviews(nextProduct.id)
 
         setProduct(nextProduct)
         setRelatedProducts(nextRelatedProducts)
+        setProductReviews(nextProductReviews)
+        setReviewTarget(undefined)
       } catch (err) {
         console.error('Failed to load backend product:', err)
         setError('Unable to load backend product. Showing demo product instead.')
@@ -68,6 +101,58 @@ export function ProductDetailPage() {
   const handleQuantityChange = (change: number) => {
     const newQty = Math.max(1, quantity + change)
     setQuantity(newQty)
+  }
+
+  const handleShowReviewForm = () => {
+    setReviewError(undefined)
+    setReviewMessage(undefined)
+    setShowReviewForm(true)
+  }
+
+  const handleSubmitReview = async (event: FormEvent) => {
+    event.preventDefault()
+
+    if (!reviewComment.trim()) {
+      setReviewError('Please write your review before submitting.')
+      return
+    }
+
+    setReviewSubmitting(true)
+    setReviewError(undefined)
+    setReviewMessage(undefined)
+
+    try {
+      const target = await validateProductReviewTarget(
+        product.id,
+        Number(reviewOrderId),
+        Number(reviewOrderDetailId)
+      )
+      setReviewTarget(target)
+
+      await createProductReview({
+        orderDetailId: target.orderDetailId,
+        rating: reviewRating,
+        comment: reviewComment,
+      })
+      const nextReviews = await getProductReviews(product.id)
+      setProductReviews(nextReviews)
+      setProduct((currentProduct) => ({
+        ...currentProduct,
+        rating: nextReviews.length > 0
+          ? nextReviews.reduce((sum, review) => sum + review.rating, 0) / nextReviews.length
+          : currentProduct.rating,
+        reviewCount: nextReviews.length,
+      }))
+      setReviewComment('')
+      setReviewRating(5)
+      setShowReviewForm(false)
+      setReviewMessage('Thank you. Your review has been saved to the backend.')
+    } catch (err) {
+      console.error('Failed to save review:', err)
+      setReviewError(err instanceof Error ? err.message : 'Review could not be saved.')
+    } finally {
+      setReviewSubmitting(false)
+    }
   }
 
   return (
@@ -126,10 +211,10 @@ export function ProductDetailPage() {
                 {[...Array(5)].map((_, i) => (
                   <StarFilled
                     key={i}
-                    className={i < Math.floor(product.rating || 0) ? styles.starFilled : styles.starEmpty}
+                    className={i < Math.floor(displayedRating) ? styles.starFilled : styles.starEmpty}
                   />
                 ))}
-                <span>({product.reviewCount} Reviews)</span>
+                <span>({displayedReviewCount} Reviews)</span>
               </div>
 
               {/* Price */}
@@ -197,46 +282,108 @@ export function ProductDetailPage() {
             {/* Rating Summary */}
             <div className={styles.ratingSummary}>
               <div className={styles.ratingScore}>
-                <h2>{product.rating?.toFixed(1)}</h2>
+                <h2>{displayedRating.toFixed(1)}</h2>
                 <div className={styles.stars}>
                   {[...Array(5)].map((_, i) => (
                     <StarFilled
                       key={i}
-                      className={i < Math.floor(product.rating || 0) ? styles.starFilled : styles.starEmpty}
+                      className={i < Math.floor(displayedRating) ? styles.starFilled : styles.starEmpty}
                     />
                   ))}
                 </div>
-                <p>Based on {product.reviewCount} reviews</p>
+                <p>Based on {displayedReviewCount} reviews</p>
               </div>
 
               <div className={styles.ratingBars}>
-                {[5, 4, 3, 2, 1].map((star) => (
+                {ratingDistribution.map(({ star, count, percent }) => (
                   <div key={star} className={styles.ratingBar}>
                     <span>{star} ★</span>
                     <div className={styles.bar}>
                       <div
                         className={styles.fill}
-                        style={{ width: `${(star / 5) * 100}%` }}
+                        style={{ width: `${percent}%` }}
                       ></div>
                     </div>
-                    <span>30%</span>
+                    <span>{count}</span>
                   </div>
                 ))}
               </div>
 
-              <button className="btn-secondary" style={{ width: '100%' }}>
+              <button className="btn-secondary" style={{ width: '100%' }} onClick={handleShowReviewForm}>
                 WRITE A REVIEW
               </button>
+
+              {reviewMessage && <p className={styles.reviewSuccess}>{reviewMessage}</p>}
+              {reviewError && <p className={styles.reviewError}>{reviewError}</p>}
+
+              {showReviewForm && (
+                <form className={styles.reviewForm} onSubmit={handleSubmitReview}>
+                  <label>
+                    <span>Order ID</span>
+                    <input
+                      type="number"
+                      value={reviewOrderId}
+                      onChange={(event) => {
+                        setReviewOrderId(event.target.value)
+                        setReviewTarget(undefined)
+                      }}
+                      required
+                    />
+                  </label>
+                  <label>
+                    <span>Order Detail ID</span>
+                    <input
+                      type="number"
+                      value={reviewOrderDetailId}
+                      onChange={(event) => {
+                        setReviewOrderDetailId(event.target.value)
+                        setReviewTarget(undefined)
+                      }}
+                      required
+                    />
+                  </label>
+                  {reviewTarget && (
+                    <label>
+                      <span>Your name</span>
+                      <input value={reviewTarget.customerName} readOnly required />
+                    </label>
+                  )}
+                  <label>
+                    <span>Rating</span>
+                    <select value={reviewRating} onChange={(event) => setReviewRating(Number(event.target.value))}>
+                      <option value={5}>5 stars</option>
+                      <option value={4}>4 stars</option>
+                      <option value={3}>3 stars</option>
+                      <option value={2}>2 stars</option>
+                      <option value={1}>1 star</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Review</span>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(event) => setReviewComment(event.target.value)}
+                      rows={4}
+                      required
+                    />
+                  </label>
+                  <button className="btn-primary" type="submit" disabled={reviewSubmitting}>
+                    {reviewSubmitting ? 'Saving...' : 'Submit Review'}
+                  </button>
+                </form>
+              )}
             </div>
 
             {/* Reviews List */}
             <div className={styles.reviewsList}>
-              {REVIEWS.map((review) => (
+              {productReviews.length === 0 && (
+                <div className={styles.emptyReviews}>
+                  No backend reviews for this product yet.
+                </div>
+              )}
+              {productReviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
               ))}
-              <button className="btn-secondary" style={{ width: '100%', marginTop: '24px' }}>
-                Load More Reviews
-              </button>
             </div>
           </div>
         </div>

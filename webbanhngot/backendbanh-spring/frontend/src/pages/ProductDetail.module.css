@@ -327,6 +327,69 @@
   gap: var(--spacing-lg);
 }
 
+.reviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.reviewForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.reviewForm input,
+.reviewForm select,
+.reviewForm textarea {
+  width: 100%;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--text-dark);
+  font: inherit;
+  background-color: white;
+}
+
+.reviewForm input[readonly] {
+  background-color: var(--bg-light);
+}
+
+.reviewForm textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.reviewError,
+.reviewSuccess,
+.emptyReviews {
+  margin: var(--spacing-md) 0 0;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.reviewError {
+  background-color: #fff1f1;
+  color: #9b3d3d;
+}
+
+.reviewSuccess {
+  background-color: #f0faf1;
+  color: #2f7d3b;
+}
+
+.emptyReviews {
+  background-color: white;
+  color: var(--text-light);
+  box-shadow: var(--shadow-sm);
+}
+
 .relatedProducts {
   padding: var(--spacing-2xl) 0;
 }

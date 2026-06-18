@@ -127,12 +127,11 @@ public class CheckoutController {
     }
 
     private void updatePaymentMethod(Connection connection, Integer orderId, String paymentMethod) throws SQLException {
-        String sql = "INSERT INTO payment (order_id, payment_method) VALUES (?, ?) "
-                + "ON CONFLICT (order_id) DO UPDATE SET payment_method = EXCLUDED.payment_method";
+        String sql = "UPDATE payment SET payment_method = ? WHERE order_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, orderId);
-            statement.setString(2, normalizePaymentMethod(paymentMethod));
+            statement.setString(1, normalizePaymentMethod(paymentMethod));
+            statement.setInt(2, orderId);
             statement.executeUpdate();
         }
     }
