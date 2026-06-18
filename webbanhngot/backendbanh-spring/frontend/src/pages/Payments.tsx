@@ -108,11 +108,18 @@ export function PaymentsPage() {
             </label>
             <label className={styles.formField}>
               <span className={styles.label}>Payment method</span>
-              <input className={styles.input} value={form.payment_method ?? ''} onChange={(e) => setForm({ ...form, payment_method: e.target.value })} />
+              <select className={styles.input} value={form.payment_method ?? 'cash'} onChange={(e) => setForm({ ...form, payment_method: e.target.value })}>
+                <option value="cash">cash</option>
+                <option value="credit_card">credit_card</option>
+                <option value="paypal">paypal</option>
+              </select>
             </label>
             <label className={styles.formField}>
               <span className={styles.label}>Payment status</span>
-              <input className={styles.input} value={form.payment_status ?? ''} onChange={(e) => setForm({ ...form, payment_status: e.target.value })} />
+              <select className={styles.input} value={form.payment_status ?? 'pending'} onChange={(e) => setForm({ ...form, payment_status: e.target.value })}>
+                <option value="pending">pending</option>
+                <option value="completed">completed</option>
+              </select>
             </label>
             <label className={styles.formField}>
               <span className={styles.label}>Payment date</span>

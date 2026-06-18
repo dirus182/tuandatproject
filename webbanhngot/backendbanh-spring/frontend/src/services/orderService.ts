@@ -1,4 +1,5 @@
 import { API_BASE_URL, ensureOk, getNextId } from './adminApi'
+import { getLocalDateTimeString } from '../utils/dateTime'
 
 export type Order = {
   order_id?: number
@@ -61,7 +62,7 @@ function normalizeOrder(order: Order, orderId: number): Required<Order> {
 
 function normalizeDateTime(value?: string): string {
   if (!value) {
-    return new Date().toISOString().slice(0, 19)
+    return getLocalDateTimeString()
   }
 
   return value.includes('T') ? value : value.replace(' ', 'T')

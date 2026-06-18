@@ -6,6 +6,9 @@ services:
       POSTGRES_DB: 20225802gr2
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
+      TZ: Asia/Bangkok
+      PGTZ: Asia/Bangkok
+    command: ["postgres", "-c", "timezone=Asia/Bangkok"]
     ports:
       - "5432:5432"
     volumes:
@@ -33,6 +36,8 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      TZ: Asia/Bangkok
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Bangkok
     ports:
       - "8080:8080"
     healthcheck:

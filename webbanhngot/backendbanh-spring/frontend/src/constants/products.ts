@@ -89,10 +89,12 @@ export const FLAVOR_OPTIONS = [
 ]
 
 export const PRICE_RANGES = [
-  { label: '$0 - $25', min: 0, max: 25 },
-  { label: '$25 - $50', min: 25, max: 50 },
-  { label: '$50 - $100', min: 50, max: 100 },
-  { label: '$100+', min: 100, max: Infinity },
+  { label: '$1 - $2', min: 1, max: 2 },
+  { label: '$2 - $3', min: 2, max: 3 },
+  { label: '$3 - $4', min: 3, max: 4 },
+  { label: '$5 - $6', min: 5, max: 6 },
+  { label: '$6 - $7', min: 6, max: 7 },
+  { label: '$7++', min: 7, max: Infinity },
 ]
 
 export const REVIEWS: Review[] = [

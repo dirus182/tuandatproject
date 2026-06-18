@@ -222,8 +222,8 @@ export function CollectionsPage() {
               <p>Showing {filteredProducts.length} hand-crafted treats</p>
             </div>
             <div className={styles.sort}>
-              <label>Sort By: Popularity</label>
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <label className={styles.srOnly} htmlFor="sort-products">Sort products</label>
+              <select id="sort-products" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                 <option value="popularity">Popularity</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
